@@ -1,0 +1,24 @@
+{
+  "name": "bookmark-extension",
+  "version": "1.0.0",
+  "description": "",
+  "main": "elm.js",
+  "dependencies": {
+    "chokidar-cli": "^1.2.0",
+    "tachyons": "^4.5.3"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "watch": "chokidar '**/*.elm' -c 'elm make elm-src/Spelling.elm --warn --output='js/spelling.js'"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Multimo/Bouzer.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Multimo/Bouzer/issues"
+  },
+  "homepage": "https://github.com/Multimo/Bouzer#readme"
+}

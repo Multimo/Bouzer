@@ -1,14 +1,75 @@
 var _user$project$Main$update = F2(
 	function (msg, model) {
 		var _p0 = msg;
-		if (_p0.ctor === 'Increment') {
-			return model + 1;
-		} else {
-			return model - 1;
+		switch (_p0.ctor) {
+			case 'UpdateText':
+				return _elm_lang$core$Native_Utils.update(
+					model,
+					{todo: _p0._0});
+			case 'AddItem':
+				return _elm_lang$core$Native_Utils.update(
+					model,
+					{
+						todos: A2(_elm_lang$core$List_ops['::'], model.todo, model.todos)
+					});
+			default:
+				return _elm_lang$core$Native_Utils.update(
+					model,
+					{
+						todos: A2(
+							_elm_lang$core$List$filter,
+							function (t) {
+								return !_elm_lang$core$Native_Utils.eq(t, _p0._0);
+							},
+							model.todos)
+					});
 		}
 	});
-var _user$project$Main$Decrement = {ctor: 'Decrement'};
-var _user$project$Main$Increment = {ctor: 'Increment'};
+var _user$project$Main$model = {
+	todo: '',
+	todos: _elm_lang$core$Native_List.fromArray(
+		[])
+};
+var _user$project$Main$Model = F2(
+	function (a, b) {
+		return {todo: a, todos: b};
+	});
+var _user$project$Main$RemoveItem = function (a) {
+	return {ctor: 'RemoveItem', _0: a};
+};
+var _user$project$Main$todoItem = function (todo) {
+	return A2(
+		_elm_lang$html$Html$li,
+		_elm_lang$core$Native_List.fromArray(
+			[]),
+		_elm_lang$core$Native_List.fromArray(
+			[
+				_elm_lang$html$Html$text(todo),
+				A2(
+				_elm_lang$html$Html$button,
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html_Events$onClick(
+						_user$project$Main$RemoveItem(todo))
+					]),
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html$text('X')
+					]))
+			]));
+};
+var _user$project$Main$todoList = function (todos) {
+	var children = A2(_elm_lang$core$List$map, _user$project$Main$todoItem, todos);
+	return A2(
+		_elm_lang$html$Html$ul,
+		_elm_lang$core$Native_List.fromArray(
+			[]),
+		children);
+};
+var _user$project$Main$AddItem = {ctor: 'AddItem'};
+var _user$project$Main$UpdateText = function (a) {
+	return {ctor: 'UpdateText', _0: a};
+};
 var _user$project$Main$view = function (model) {
 	return A2(
 		_elm_lang$html$Html$div,
@@ -17,14 +78,24 @@ var _user$project$Main$view = function (model) {
 		_elm_lang$core$Native_List.fromArray(
 			[
 				A2(
+				_elm_lang$html$Html$input,
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html_Attributes$type$('text'),
+						_elm_lang$html$Html_Events$onInput(_user$project$Main$UpdateText),
+						_elm_lang$html$Html_Attributes$value(model.todo)
+					]),
+				_elm_lang$core$Native_List.fromArray(
+					[])),
+				A2(
 				_elm_lang$html$Html$button,
 				_elm_lang$core$Native_List.fromArray(
 					[
-						_elm_lang$html$Html_Events$onClick(_user$project$Main$Decrement)
+						_elm_lang$html$Html_Events$onClick(_user$project$Main$AddItem)
 					]),
 				_elm_lang$core$Native_List.fromArray(
 					[
-						_elm_lang$html$Html$text('-')
+						_elm_lang$html$Html$text('Add Todo')
 					])),
 				A2(
 				_elm_lang$html$Html$div,
@@ -32,22 +103,12 @@ var _user$project$Main$view = function (model) {
 					[]),
 				_elm_lang$core$Native_List.fromArray(
 					[
-						_elm_lang$html$Html$text(
-						_elm_lang$core$Basics$toString(model))
+						_elm_lang$html$Html$text(model.todo)
 					])),
-				A2(
-				_elm_lang$html$Html$button,
-				_elm_lang$core$Native_List.fromArray(
-					[
-						_elm_lang$html$Html_Events$onClick(_user$project$Main$Increment)
-					]),
-				_elm_lang$core$Native_List.fromArray(
-					[
-						_elm_lang$html$Html$text('+')
-					]))
+				_user$project$Main$todoList(model.todos)
 			]));
 };
 var _user$project$Main$main = {
 	main: _elm_lang$html$Html_App$beginnerProgram(
-		{model: 0, view: _user$project$Main$view, update: _user$project$Main$update})
+		{model: _user$project$Main$model, update: _user$project$Main$update, view: _user$project$Main$view})
 };
