@@ -9,6 +9,55 @@ import Html.Events exposing (..)
 import List exposing (..)
 -- import Debug
 
+import Html.Events exposing (..)
+import Json.Decode exposing (..)
+
+onEnter: a -> Attribute a
+onEnter msg =
+    onKeyUp [ ( 13, msg ) ]
+
+onRightArrow: a -> Attribute a
+onRightArrow msg =
+    onKeyUp [ ( 39, msg ) ]
+
+onLeftArrow: a -> Attribute a
+onLeftArrow msg =
+    onKeyUp [ ( 37, msg ) ]
+
+onUpArrow: a -> Attribute a
+onUpArrow msg =
+    onKeyUp [ ( 38, msg ) ]
+
+onDownArrow: a -> Attribute a
+onDownArrow msg =
+    onKeyUp [ ( 40, msg ) ]
+
+
+
+
+onEnterOrLeft enter escape =
+    onKeyUp [ ( 13, enter ), ( 27, escape ) ]
+
+
+onKeyUp options =
+    let
+        filter optionsToCheck code =
+            case optionsToCheck of
+                [] ->
+                    Err "key code is not in the list"
+
+                ( c, msg ) :: rest ->
+                    if (c == code) then
+                        Ok msg
+                    else
+                        filter rest code
+
+        keyCodes =
+            customDecoder keyCode (filter options)
+    in
+        on "keyup" keyCodes
+
+
 
 main : Program Never
 main =
@@ -95,11 +144,12 @@ subscriptions model =
 
 
 
+
 -- view : Model -> Html msg
 view model =
   div [ class "pa2 w-100 flex flex-column container bg-lightest-blue" ]
-    [ input [ class "w-90 self-center ma1 br3", onInput Change ] []
-    , button [ class "w-50 self-center ma1 br3", onSubmit Check ] [ text "Check" ]
+    [ input [ class "w-60 self-center ma1 br3", onInput Change ] []
+    , button [ class "w-40 self-center ma1 br3", onSubmit Check ] [ text "Check" ]
     , tabsList model
     ]
 
@@ -111,11 +161,11 @@ tabsList model =
 
 -- toLi : Model -> Html msg
 toLi tab =
-  a [ onClick ( Activate tab.tabID ), tabindex 1, class "grow" ] [
+    a [ onRightArrow ( Close tab.tabID ), onLeftArrow ( Activate tab.tabID ), tabindex 1, class "grow" ] [
     li [ class ( "list flex flex-row pa2 w-100 items-center " ++ ( if tab.active then "bg-washed-green" else "bg-lightest-blue" ) ) ]
     [ img [ src tab.favIconUrl, height 25, width 25, class "pl2 pr2" ] [ ]
     , div [ class "w-60" ] [ text tab.title ]
-    , div [ class "w-10", onClick ( Close tab.tabID ) ] [ text  "X" ]
+    , div [ class "w-20 red", onClick ( Close tab.tabID ) ] [ text  "X" ]
     , div [ class "w-10", onClick ( Activate tab.tabID ) ] [ text  "0"  ]
     ]
   ]

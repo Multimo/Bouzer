@@ -7897,6 +7897,77 @@ var _elm_lang$html$Html_Events$Options = F2(
 		return {stopPropagation: a, preventDefault: b};
 	});
 
+var _user$project$Spelling$onKeyUp = function (options) {
+	var filter = F2(
+		function (optionsToCheck, code) {
+			filter:
+			while (true) {
+				var _p0 = optionsToCheck;
+				if (_p0.ctor === '[]') {
+					return _elm_lang$core$Result$Err('key code is not in the list');
+				} else {
+					if (_elm_lang$core$Native_Utils.eq(_p0._0._0, code)) {
+						return _elm_lang$core$Result$Ok(_p0._0._1);
+					} else {
+						var _v1 = _p0._1,
+							_v2 = code;
+						optionsToCheck = _v1;
+						code = _v2;
+						continue filter;
+					}
+				}
+			}
+		});
+	var keyCodes = A2(
+		_elm_lang$core$Json_Decode$customDecoder,
+		_elm_lang$html$Html_Events$keyCode,
+		filter(options));
+	return A2(_elm_lang$html$Html_Events$on, 'keyup', keyCodes);
+};
+var _user$project$Spelling$onEnterOrLeft = F2(
+	function (enter, escape) {
+		return _user$project$Spelling$onKeyUp(
+			_elm_lang$core$Native_List.fromArray(
+				[
+					{ctor: '_Tuple2', _0: 13, _1: enter},
+					{ctor: '_Tuple2', _0: 27, _1: escape}
+				]));
+	});
+var _user$project$Spelling$onDownArrow = function (msg) {
+	return _user$project$Spelling$onKeyUp(
+		_elm_lang$core$Native_List.fromArray(
+			[
+				{ctor: '_Tuple2', _0: 40, _1: msg}
+			]));
+};
+var _user$project$Spelling$onUpArrow = function (msg) {
+	return _user$project$Spelling$onKeyUp(
+		_elm_lang$core$Native_List.fromArray(
+			[
+				{ctor: '_Tuple2', _0: 38, _1: msg}
+			]));
+};
+var _user$project$Spelling$onLeftArrow = function (msg) {
+	return _user$project$Spelling$onKeyUp(
+		_elm_lang$core$Native_List.fromArray(
+			[
+				{ctor: '_Tuple2', _0: 37, _1: msg}
+			]));
+};
+var _user$project$Spelling$onRightArrow = function (msg) {
+	return _user$project$Spelling$onKeyUp(
+		_elm_lang$core$Native_List.fromArray(
+			[
+				{ctor: '_Tuple2', _0: 39, _1: msg}
+			]));
+};
+var _user$project$Spelling$onEnter = function (msg) {
+	return _user$project$Spelling$onKeyUp(
+		_elm_lang$core$Native_List.fromArray(
+			[
+				{ctor: '_Tuple2', _0: 13, _1: msg}
+			]));
+};
 var _user$project$Spelling$check = _elm_lang$core$Native_Platform.outgoingPort(
 	'check',
 	function (v) {
@@ -7966,14 +8037,14 @@ var _user$project$Spelling$init = {
 };
 var _user$project$Spelling$update = F2(
 	function (msg, model) {
-		var _p0 = msg;
-		switch (_p0.ctor) {
+		var _p1 = msg;
+		switch (_p1.ctor) {
 			case 'Change':
 				return {
 					ctor: '_Tuple2',
 					_0: A3(
 						_user$project$Spelling$Model,
-						_p0._0,
+						_p1._0,
 						_elm_lang$core$Native_List.fromArray(
 							[]),
 						model.tabs),
@@ -7988,26 +8059,26 @@ var _user$project$Spelling$update = F2(
 			case 'Suggest':
 				return {
 					ctor: '_Tuple2',
-					_0: A3(_user$project$Spelling$Model, model.word, _p0._0, model.tabs),
+					_0: A3(_user$project$Spelling$Model, model.word, _p1._0, model.tabs),
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
 			case 'Tabs':
 				return {
 					ctor: '_Tuple2',
-					_0: A3(_user$project$Spelling$Model, model.word, model.suggestions, _p0._0),
+					_0: A3(_user$project$Spelling$Model, model.word, model.suggestions, _p1._0),
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
 			case 'Close':
 				return {
 					ctor: '_Tuple2',
 					_0: model,
-					_1: _user$project$Spelling$close(_p0._0)
+					_1: _user$project$Spelling$close(_p1._0)
 				};
 			default:
 				return {
 					ctor: '_Tuple2',
 					_0: model,
-					_1: _user$project$Spelling$activate(_p0._0)
+					_1: _user$project$Spelling$activate(_p1._0)
 				};
 		}
 	});
@@ -8022,7 +8093,9 @@ var _user$project$Spelling$toLi = function (tab) {
 		_elm_lang$html$Html$a,
 		_elm_lang$core$Native_List.fromArray(
 			[
-				_elm_lang$html$Html_Events$onClick(
+				_user$project$Spelling$onRightArrow(
+				_user$project$Spelling$Close(tab.tabID)),
+				_user$project$Spelling$onLeftArrow(
 				_user$project$Spelling$Activate(tab.tabID)),
 				_elm_lang$html$Html_Attributes$tabindex(1),
 				_elm_lang$html$Html_Attributes$class('grow')
@@ -8066,7 +8139,7 @@ var _user$project$Spelling$toLi = function (tab) {
 						_elm_lang$html$Html$div,
 						_elm_lang$core$Native_List.fromArray(
 							[
-								_elm_lang$html$Html_Attributes$class('w-10'),
+								_elm_lang$html$Html_Attributes$class('w-20 red'),
 								_elm_lang$html$Html_Events$onClick(
 								_user$project$Spelling$Close(tab.tabID))
 							]),
@@ -8129,7 +8202,7 @@ var _user$project$Spelling$view = function (model) {
 				_elm_lang$html$Html$input,
 				_elm_lang$core$Native_List.fromArray(
 					[
-						_elm_lang$html$Html_Attributes$class('w-90 self-center ma1 br3'),
+						_elm_lang$html$Html_Attributes$class('w-60 self-center ma1 br3'),
 						_elm_lang$html$Html_Events$onInput(_user$project$Spelling$Change)
 					]),
 				_elm_lang$core$Native_List.fromArray(
@@ -8138,7 +8211,7 @@ var _user$project$Spelling$view = function (model) {
 				_elm_lang$html$Html$button,
 				_elm_lang$core$Native_List.fromArray(
 					[
-						_elm_lang$html$Html_Attributes$class('w-50 self-center ma1 br3'),
+						_elm_lang$html$Html_Attributes$class('w-40 self-center ma1 br3'),
 						_elm_lang$html$Html_Events$onSubmit(_user$project$Spelling$Check)
 					]),
 				_elm_lang$core$Native_List.fromArray(
