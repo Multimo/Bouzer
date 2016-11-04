@@ -7897,21 +7897,18 @@ var _elm_lang$html$Html_Events$Options = F2(
 		return {stopPropagation: a, preventDefault: b};
 	});
 
-var _user$project$Spelling$toLi = function (s) {
-	return A2(
-		_elm_lang$html$Html$li,
-		_elm_lang$core$Native_List.fromArray(
-			[
-				_elm_lang$html$Html_Attributes$class('list pa2')
-			]),
-		_elm_lang$core$Native_List.fromArray(
-			[
-				_elm_lang$html$Html$text(
-				_elm_lang$core$Basics$toString(s))
-			]));
-};
 var _user$project$Spelling$check = _elm_lang$core$Native_Platform.outgoingPort(
 	'check',
+	function (v) {
+		return v;
+	});
+var _user$project$Spelling$close = _elm_lang$core$Native_Platform.outgoingPort(
+	'close',
+	function (v) {
+		return v;
+	});
+var _user$project$Spelling$activate = _elm_lang$core$Native_Platform.outgoingPort(
+	'activate',
 	function (v) {
 		return v;
 	});
@@ -7921,7 +7918,37 @@ var _user$project$Spelling$suggestions = _elm_lang$core$Native_Platform.incoming
 var _user$project$Spelling$initialTabs = _elm_lang$core$Native_Platform.incomingPort(
 	'initialTabs',
 	_elm_lang$core$Json_Decode$list(
-		_elm_lang$core$Json_Decode$list(_elm_lang$core$Json_Decode$string)));
+		A2(
+			_elm_lang$core$Json_Decode$andThen,
+			A2(_elm_lang$core$Json_Decode_ops[':='], 'url', _elm_lang$core$Json_Decode$string),
+			function (url) {
+				return A2(
+					_elm_lang$core$Json_Decode$andThen,
+					A2(_elm_lang$core$Json_Decode_ops[':='], 'title', _elm_lang$core$Json_Decode$string),
+					function (title) {
+						return A2(
+							_elm_lang$core$Json_Decode$andThen,
+							A2(_elm_lang$core$Json_Decode_ops[':='], 'active', _elm_lang$core$Json_Decode$bool),
+							function (active) {
+								return A2(
+									_elm_lang$core$Json_Decode$andThen,
+									A2(_elm_lang$core$Json_Decode_ops[':='], 'tabID', _elm_lang$core$Json_Decode$int),
+									function (tabID) {
+										return A2(
+											_elm_lang$core$Json_Decode$andThen,
+											A2(_elm_lang$core$Json_Decode_ops[':='], 'favIconUrl', _elm_lang$core$Json_Decode$string),
+											function (favIconUrl) {
+												return _elm_lang$core$Json_Decode$succeed(
+													{url: url, title: title, active: active, tabID: tabID, favIconUrl: favIconUrl});
+											});
+									});
+							});
+					});
+			})));
+var _user$project$Spelling$TabsList = F5(
+	function (a, b, c, d, e) {
+		return {url: a, title: b, active: c, tabID: d, favIconUrl: e};
+	});
 var _user$project$Spelling$Model = F3(
 	function (a, b, c) {
 		return {word: a, suggestions: b, tabs: c};
@@ -7937,20 +7964,16 @@ var _user$project$Spelling$init = {
 			[])),
 	_1: _elm_lang$core$Platform_Cmd$none
 };
-var _user$project$Spelling$Tabs = function (a) {
-	return {ctor: 'Tabs', _0: a};
-};
 var _user$project$Spelling$update = F2(
 	function (msg, model) {
-		var _p0 = A2(_elm_lang$core$Debug$log, 'my message', _user$project$Spelling$Tabs);
-		var _p1 = msg;
-		switch (_p1.ctor) {
+		var _p0 = msg;
+		switch (_p0.ctor) {
 			case 'Change':
 				return {
 					ctor: '_Tuple2',
 					_0: A3(
 						_user$project$Spelling$Model,
-						_p1._0,
+						_p0._0,
 						_elm_lang$core$Native_List.fromArray(
 							[]),
 						model.tabs),
@@ -7965,22 +7988,119 @@ var _user$project$Spelling$update = F2(
 			case 'Suggest':
 				return {
 					ctor: '_Tuple2',
-					_0: A3(_user$project$Spelling$Model, model.word, _p1._0, model.tabs),
+					_0: A3(_user$project$Spelling$Model, model.word, _p0._0, model.tabs),
 					_1: _elm_lang$core$Platform_Cmd$none
+				};
+			case 'Tabs':
+				return {
+					ctor: '_Tuple2',
+					_0: A3(_user$project$Spelling$Model, model.word, model.suggestions, _p0._0),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+			case 'Close':
+				return {
+					ctor: '_Tuple2',
+					_0: model,
+					_1: _user$project$Spelling$close(_p0._0)
 				};
 			default:
 				return {
 					ctor: '_Tuple2',
-					_0: A3(
-						_user$project$Spelling$Model,
-						model.word,
-						_elm_lang$core$Native_List.fromArray(
-							[]),
-						_p1._0),
-					_1: _elm_lang$core$Platform_Cmd$none
+					_0: model,
+					_1: _user$project$Spelling$activate(_p0._0)
 				};
 		}
 	});
+var _user$project$Spelling$Activate = function (a) {
+	return {ctor: 'Activate', _0: a};
+};
+var _user$project$Spelling$Close = function (a) {
+	return {ctor: 'Close', _0: a};
+};
+var _user$project$Spelling$toLi = function (tab) {
+	return A2(
+		_elm_lang$html$Html$a,
+		_elm_lang$core$Native_List.fromArray(
+			[
+				_elm_lang$html$Html_Events$onClick(
+				_user$project$Spelling$Activate(tab.tabID)),
+				_elm_lang$html$Html_Attributes$tabindex(1),
+				_elm_lang$html$Html_Attributes$class('grow')
+			]),
+		_elm_lang$core$Native_List.fromArray(
+			[
+				A2(
+				_elm_lang$html$Html$li,
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html_Attributes$class(
+						A2(
+							_elm_lang$core$Basics_ops['++'],
+							'list flex flex-row pa2 w-100 items-center ',
+							tab.active ? 'bg-washed-green' : 'bg-lightest-blue'))
+					]),
+				_elm_lang$core$Native_List.fromArray(
+					[
+						A2(
+						_elm_lang$html$Html$img,
+						_elm_lang$core$Native_List.fromArray(
+							[
+								_elm_lang$html$Html_Attributes$src(tab.favIconUrl),
+								_elm_lang$html$Html_Attributes$height(25),
+								_elm_lang$html$Html_Attributes$width(25),
+								_elm_lang$html$Html_Attributes$class('pl2 pr2')
+							]),
+						_elm_lang$core$Native_List.fromArray(
+							[])),
+						A2(
+						_elm_lang$html$Html$div,
+						_elm_lang$core$Native_List.fromArray(
+							[
+								_elm_lang$html$Html_Attributes$class('w-60')
+							]),
+						_elm_lang$core$Native_List.fromArray(
+							[
+								_elm_lang$html$Html$text(tab.title)
+							])),
+						A2(
+						_elm_lang$html$Html$div,
+						_elm_lang$core$Native_List.fromArray(
+							[
+								_elm_lang$html$Html_Attributes$class('w-10'),
+								_elm_lang$html$Html_Events$onClick(
+								_user$project$Spelling$Close(tab.tabID))
+							]),
+						_elm_lang$core$Native_List.fromArray(
+							[
+								_elm_lang$html$Html$text('X')
+							])),
+						A2(
+						_elm_lang$html$Html$div,
+						_elm_lang$core$Native_List.fromArray(
+							[
+								_elm_lang$html$Html_Attributes$class('w-10'),
+								_elm_lang$html$Html_Events$onClick(
+								_user$project$Spelling$Activate(tab.tabID))
+							]),
+						_elm_lang$core$Native_List.fromArray(
+							[
+								_elm_lang$html$Html$text('0')
+							]))
+					]))
+			]));
+};
+var _user$project$Spelling$tabsList = function (model) {
+	return A2(
+		_elm_lang$html$Html$ul,
+		_elm_lang$core$Native_List.fromArray(
+			[
+				_elm_lang$html$Html_Attributes$class('pa0 flex-column flex self-center w-100')
+			]),
+		A2(_elm_lang$core$List$map, _user$project$Spelling$toLi, model.tabs));
+};
+var _user$project$Spelling$Tabs = function (a) {
+	return {ctor: 'Tabs', _0: a};
+};
 var _user$project$Spelling$Suggest = function (a) {
 	return {ctor: 'Suggest', _0: a};
 };
@@ -8001,7 +8121,7 @@ var _user$project$Spelling$view = function (model) {
 		_elm_lang$html$Html$div,
 		_elm_lang$core$Native_List.fromArray(
 			[
-				_elm_lang$html$Html_Attributes$class('pa5')
+				_elm_lang$html$Html_Attributes$class('pa2 w-100 flex flex-column container bg-lightest-blue')
 			]),
 		_elm_lang$core$Native_List.fromArray(
 			[
@@ -8009,6 +8129,7 @@ var _user$project$Spelling$view = function (model) {
 				_elm_lang$html$Html$input,
 				_elm_lang$core$Native_List.fromArray(
 					[
+						_elm_lang$html$Html_Attributes$class('w-90 self-center ma1 br3'),
 						_elm_lang$html$Html_Events$onInput(_user$project$Spelling$Change)
 					]),
 				_elm_lang$core$Native_List.fromArray(
@@ -8017,28 +8138,14 @@ var _user$project$Spelling$view = function (model) {
 				_elm_lang$html$Html$button,
 				_elm_lang$core$Native_List.fromArray(
 					[
-						_elm_lang$html$Html_Events$onClick(_user$project$Spelling$Check)
+						_elm_lang$html$Html_Attributes$class('w-50 self-center ma1 br3'),
+						_elm_lang$html$Html_Events$onSubmit(_user$project$Spelling$Check)
 					]),
 				_elm_lang$core$Native_List.fromArray(
 					[
 						_elm_lang$html$Html$text('Check')
 					])),
-				A2(
-				_elm_lang$html$Html$div,
-				_elm_lang$core$Native_List.fromArray(
-					[]),
-				_elm_lang$core$Native_List.fromArray(
-					[
-						_elm_lang$html$Html$text(
-						A2(_elm_lang$core$String$join, ', ', model.suggestions))
-					])),
-				A2(
-				_elm_lang$html$Html$ul,
-				_elm_lang$core$Native_List.fromArray(
-					[
-						_elm_lang$html$Html_Attributes$class('pa0')
-					]),
-				A2(_elm_lang$core$List$map, _user$project$Spelling$toLi, model.tabs))
+				_user$project$Spelling$tabsList(model)
 			]));
 };
 var _user$project$Spelling$main = {

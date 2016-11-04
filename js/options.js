@@ -1,64 +1,65 @@
-// document.addEventListener('DOMContentLoaded', function() {
-//   var div = document.getElementById('widget');
-//   var main = Elm.embed(Elm.Main, div, {reset:[]});
-// });
-//
-//
-
-
-// main.ports.jsToElm.send(['hi']);
-// main.ports.elmToJs.subscribe(function(event) {
-//     console.log(event.value);
-// });
 
 var app = Elm.Spelling.fullscreen();
 
 app.ports.check.subscribe(function(word) {
-    var suggestions = spellCheck(word);
+    // var suggestions = spellCheck(word);
     app.ports.suggestions.send(suggestions);
 });
 
-function spellCheck(word) {
-    return [];
-}
+app.ports.close.subscribe(function(tab) {
+    // close tab here
+    console.log(tab);
+    chrome.tabs.remove(tab, function() { });
+
+    // send back new state here
+    chrome.tabs.query({
+        currentWindow: true
+      }, function(data) {
+        updateState(data);
+      });
+});
+
 
 
 chrome.tabs.query({
     currentWindow: true
-  },
-    function(data) {
-      var tabsElm = [];
-      return data.map(function(tab){
-        var tabz = [];
-        tabz.push(tab.url);
-        tabz.push(tab.title);
-        tabsElm.push(tabz);
-        return tabsElm;
+  }, function(data) {
+    updateState(data);
+  });
 
-      }),
-      app.ports.initialTabs.send(tabsElm);
+
+app.ports.activate.subscribe(function(tab) {
+    // make tab active here
+    console.log(tab);
+    chrome.tabs.update(tab,  {selected: true} );
+
+    // send back new state here
+    chrome.tabs.query({
+        currentWindow: true
+      }, function(data) {
+        updateState(data);
+      });
 });
 
 
-//
-// chrome.tabs.query({
-//   currentWindow: true
-// },
-//   function(data) {
-//     console.log(data);
-//     var newArray= [];
-//     var tabsElm = data.map(function(tab){
-//       var counter = 0;
-//       console.log(counter);
-//       newArray.push(tab.url);
-//       counter++;
-//       return newArray;
-//     });
-//     console.log(tabsElm);
-//
-//     app.ports.initalTabs.send(tabsElm);
-// });
 
-var callback = function(x) {
-  console.log(x);
-};
+
+
+
+function updateState(data) {
+  var tabsElm = [];
+  return data.map(function(tab){
+    // console.log(tab);
+    tabz = {
+      'url' : tab.url,
+      'title' : tab.title,
+      'active': tab.active,
+      'tabID' : tab.id,
+      'favIconUrl' : tab.favIconUrl ? tab.favIconUrl : '../../icons/icon48.png'
+    };
+    tabsElm.push(tabz);
+    return tabsElm;
+
+  }),
+  app.ports.initialTabs.send(tabsElm);
+}

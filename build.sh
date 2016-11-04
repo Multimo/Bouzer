@@ -1,1 +1,1 @@
-elm make elm-src/Main.elm --warn --output="js/elm.js"
+elm make elm-src/Spelling.elm --warn --output="js/spelling.js"

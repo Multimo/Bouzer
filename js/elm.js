@@ -7897,92 +7897,129 @@ var _elm_lang$html$Html_Events$Options = F2(
 		return {stopPropagation: a, preventDefault: b};
 	});
 
-var _user$project$Main$update = F2(
+var _user$project$Spelling$toLi = function (tab) {
+	return _elm_lang$core$List$map(
+		function (s) {
+			return A2(
+				_elm_lang$html$Html$div,
+				_elm_lang$core$Native_List.fromArray(
+					[]),
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html$text(
+						_elm_lang$core$Basics$toString(tab))
+					]));
+		});
+};
+var _user$project$Spelling$check = _elm_lang$core$Native_Platform.outgoingPort(
+	'check',
+	function (v) {
+		return v;
+	});
+var _user$project$Spelling$suggestions = _elm_lang$core$Native_Platform.incomingPort(
+	'suggestions',
+	_elm_lang$core$Json_Decode$list(_elm_lang$core$Json_Decode$string));
+var _user$project$Spelling$initialTabs = _elm_lang$core$Native_Platform.incomingPort(
+	'initialTabs',
+	_elm_lang$core$Json_Decode$list(
+		A2(
+			_elm_lang$core$Json_Decode$andThen,
+			A2(_elm_lang$core$Json_Decode_ops[':='], 'url', _elm_lang$core$Json_Decode$string),
+			function (url) {
+				return A2(
+					_elm_lang$core$Json_Decode$andThen,
+					A2(_elm_lang$core$Json_Decode_ops[':='], 'title', _elm_lang$core$Json_Decode$string),
+					function (title) {
+						return _elm_lang$core$Json_Decode$succeed(
+							{url: url, title: title});
+					});
+			})));
+var _user$project$Spelling$TabsList = F2(
+	function (a, b) {
+		return {url: a, title: b};
+	});
+var _user$project$Spelling$Model = F3(
+	function (a, b, c) {
+		return {word: a, suggestions: b, tabs: c};
+	});
+var _user$project$Spelling$init = {
+	ctor: '_Tuple2',
+	_0: A3(
+		_user$project$Spelling$Model,
+		'',
+		_elm_lang$core$Native_List.fromArray(
+			[]),
+		_elm_lang$core$Native_List.fromArray(
+			[])),
+	_1: _elm_lang$core$Platform_Cmd$none
+};
+var _user$project$Spelling$update = F2(
 	function (msg, model) {
 		var _p0 = msg;
 		switch (_p0.ctor) {
-			case 'UpdateText':
-				return _elm_lang$core$Native_Utils.update(
-					model,
-					{todo: _p0._0});
-			case 'AddItem':
-				return _elm_lang$core$Native_Utils.update(
-					model,
-					{
-						todos: A2(_elm_lang$core$List_ops['::'], model.todo, model.todos)
-					});
+			case 'Change':
+				return {
+					ctor: '_Tuple2',
+					_0: A3(
+						_user$project$Spelling$Model,
+						_p0._0,
+						_elm_lang$core$Native_List.fromArray(
+							[]),
+						model.tabs),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+			case 'Check':
+				return {
+					ctor: '_Tuple2',
+					_0: model,
+					_1: _user$project$Spelling$check(model.word)
+				};
+			case 'Suggest':
+				return {
+					ctor: '_Tuple2',
+					_0: A3(_user$project$Spelling$Model, model.word, _p0._0, model.tabs),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
 			default:
-				return _elm_lang$core$Native_Utils.update(
-					model,
-					{
-						todos: A2(
-							_elm_lang$core$List$filter,
-							function (t) {
-								return !_elm_lang$core$Native_Utils.eq(t, _p0._0);
-							},
-							model.todos)
-					});
+				return {
+					ctor: '_Tuple2',
+					_0: A3(_user$project$Spelling$Model, model.word, model.suggestions, _p0._0),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
 		}
 	});
-var _user$project$Main$model = {
-	todo: '',
-	todos: _elm_lang$core$Native_List.fromArray(
-		[])
+var _user$project$Spelling$Tabs = function (a) {
+	return {ctor: 'Tabs', _0: a};
 };
-var _user$project$Main$Model = F2(
-	function (a, b) {
-		return {todo: a, todos: b};
-	});
-var _user$project$Main$RemoveItem = function (a) {
-	return {ctor: 'RemoveItem', _0: a};
+var _user$project$Spelling$Suggest = function (a) {
+	return {ctor: 'Suggest', _0: a};
 };
-var _user$project$Main$todoItem = function (todo) {
-	return A2(
-		_elm_lang$html$Html$li,
-		_elm_lang$core$Native_List.fromArray(
-			[]),
+var _user$project$Spelling$subscriptions = function (model) {
+	return _elm_lang$core$Platform_Sub$batch(
 		_elm_lang$core$Native_List.fromArray(
 			[
-				_elm_lang$html$Html$text(todo),
-				A2(
-				_elm_lang$html$Html$button,
-				_elm_lang$core$Native_List.fromArray(
-					[
-						_elm_lang$html$Html_Events$onClick(
-						_user$project$Main$RemoveItem(todo))
-					]),
-				_elm_lang$core$Native_List.fromArray(
-					[
-						_elm_lang$html$Html$text('X')
-					]))
+				_user$project$Spelling$suggestions(_user$project$Spelling$Suggest),
+				_user$project$Spelling$initialTabs(_user$project$Spelling$Tabs)
 			]));
 };
-var _user$project$Main$todoList = function (todos) {
-	var children = A2(_elm_lang$core$List$map, _user$project$Main$todoItem, todos);
-	return A2(
-		_elm_lang$html$Html$ul,
-		_elm_lang$core$Native_List.fromArray(
-			[]),
-		children);
+var _user$project$Spelling$Check = {ctor: 'Check'};
+var _user$project$Spelling$Change = function (a) {
+	return {ctor: 'Change', _0: a};
 };
-var _user$project$Main$AddItem = {ctor: 'AddItem'};
-var _user$project$Main$UpdateText = function (a) {
-	return {ctor: 'UpdateText', _0: a};
-};
-var _user$project$Main$view = function (model) {
+var _user$project$Spelling$view = function (model) {
 	return A2(
 		_elm_lang$html$Html$div,
 		_elm_lang$core$Native_List.fromArray(
-			[]),
+			[
+				_elm_lang$html$Html_Attributes$class('pa5')
+			]),
 		_elm_lang$core$Native_List.fromArray(
 			[
 				A2(
 				_elm_lang$html$Html$input,
 				_elm_lang$core$Native_List.fromArray(
 					[
-						_elm_lang$html$Html_Attributes$type$('text'),
-						_elm_lang$html$Html_Events$onInput(_user$project$Main$UpdateText),
-						_elm_lang$html$Html_Attributes$value(model.todo)
+						_elm_lang$html$Html_Events$onInput(_user$project$Spelling$Change)
 					]),
 				_elm_lang$core$Native_List.fromArray(
 					[])),
@@ -7990,31 +8027,31 @@ var _user$project$Main$view = function (model) {
 				_elm_lang$html$Html$button,
 				_elm_lang$core$Native_List.fromArray(
 					[
-						_elm_lang$html$Html_Events$onClick(_user$project$Main$AddItem)
+						_elm_lang$html$Html_Events$onClick(_user$project$Spelling$Check)
 					]),
 				_elm_lang$core$Native_List.fromArray(
 					[
-						_elm_lang$html$Html$text('Add Todo')
+						_elm_lang$html$Html$text('Check')
 					])),
 				A2(
-				_elm_lang$html$Html$div,
+				_elm_lang$html$Html$pre,
 				_elm_lang$core$Native_List.fromArray(
 					[]),
 				_elm_lang$core$Native_List.fromArray(
 					[
-						_elm_lang$html$Html$text(model.todo)
-					])),
-				_user$project$Main$todoList(model.todos)
+						_elm_lang$html$Html$text(
+						_elm_lang$core$Basics$toString(model.tabs))
+					]))
 			]));
 };
-var _user$project$Main$main = {
-	main: _elm_lang$html$Html_App$beginnerProgram(
-		{model: _user$project$Main$model, update: _user$project$Main$update, view: _user$project$Main$view})
+var _user$project$Spelling$main = {
+	main: _elm_lang$html$Html_App$program(
+		{init: _user$project$Spelling$init, view: _user$project$Spelling$view, update: _user$project$Spelling$update, subscriptions: _user$project$Spelling$subscriptions})
 };
 
 var Elm = {};
-Elm['Main'] = Elm['Main'] || {};
-_elm_lang$core$Native_Platform.addPublicModule(Elm['Main'], 'Main', typeof _user$project$Main$main === 'undefined' ? null : _user$project$Main$main);
+Elm['Spelling'] = Elm['Spelling'] || {};
+_elm_lang$core$Native_Platform.addPublicModule(Elm['Spelling'], 'Spelling', typeof _user$project$Spelling$main === 'undefined' ? null : _user$project$Spelling$main);
 
 if (typeof define === "function" && define['amd'])
 {
