@@ -8,55 +8,25 @@ import Html.Events exposing (..)
 -- import String
 import List exposing (..)
 -- import Debug
+import Events exposing (..)
 
 import Html.Events exposing (..)
 import Json.Decode exposing (..)
 
-onEnter: a -> Attribute a
-onEnter msg =
-    onKeyUp [ ( 13, msg ) ]
-
-onRightArrow: a -> Attribute a
-onRightArrow msg =
-    onKeyUp [ ( 39, msg ) ]
-
-onLeftArrow: a -> Attribute a
-onLeftArrow msg =
-    onKeyUp [ ( 37, msg ) ]
-
-onUpArrow: a -> Attribute a
-onUpArrow msg =
-    onKeyUp [ ( 38, msg ) ]
-
-onDownArrow: a -> Attribute a
-onDownArrow msg =
-    onKeyUp [ ( 40, msg ) ]
-
-
-
-
-onEnterOrLeft enter escape =
-    onKeyUp [ ( 13, enter ), ( 27, escape ) ]
-
-
-onKeyUp options =
+-- onKeyUp : (Int -> msg) -> Attribute msg
+-- onKeyUp tagger =
+--   on "keyup" (Json.map tagger keyCode)
+onKeyboardEvent payload =
     let
-        filter optionsToCheck code =
-            case optionsToCheck of
-                [] ->
-                    Err "key code is not in the list"
-
-                ( c, msg ) :: rest ->
-                    if (c == code) then
-                        Ok msg
-                    else
-                        filter rest code
-
-        keyCodes =
-            customDecoder keyCode (filter options)
+        tagger code =
+            if code == 13 || code == 37 then
+              Activate payload
+            else if code == 8 || code == 39 then
+              Close payload
+            else
+              NoOp
     in
-        on "keyup" keyCodes
-
+        on "keydown" (Json.Decode.map tagger keyCode)
 
 
 main : Program Never
@@ -94,7 +64,8 @@ init =
 -- UPDATE
 
 type Msg
-  = Change String
+  = NoOp
+  | Change String
   | Check
   | Suggest (List String)
   | Tabs (List TabsList)
@@ -126,6 +97,11 @@ update msg model =
 
     Activate tabId ->
       ( model, activate tabId )
+
+    NoOp ->
+      ( model, Cmd.none )
+
+
 -- SUBSCRIPTIONS
 
 port suggestions : (List String -> msg) -> Sub msg
@@ -159,13 +135,18 @@ tabsList model =
     ( List.map toLi model.tabs )
 
 
+
+
 -- toLi : Model -> Html msg
 toLi tab =
-    a [ onRightArrow ( Close tab.tabID ), onLeftArrow ( Activate tab.tabID ), tabindex 1, class "grow" ] [
+    a [  onClick ( Activate tab.tabID )
+    , onKeyboardEvent tab.tabID
+    , tabindex 1
+    , class "grow" ] [
     li [ class ( "list flex flex-row pa2 w-100 items-center " ++ ( if tab.active then "bg-washed-green" else "bg-lightest-blue" ) ) ]
     [ img [ src tab.favIconUrl, height 25, width 25, class "pl2 pr2" ] [ ]
     , div [ class "w-60" ] [ text tab.title ]
-    , div [ class "w-20 red", onClick ( Close tab.tabID ) ] [ text  "X" ]
+    , div [ class "w-20 bg-light-silver red", onClick ( Close tab.tabID ) ] [ text  "X" ]
     , div [ class "w-10", onClick ( Activate tab.tabID ) ] [ text  "0"  ]
     ]
   ]

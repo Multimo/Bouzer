@@ -7897,7 +7897,7 @@ var _elm_lang$html$Html_Events$Options = F2(
 		return {stopPropagation: a, preventDefault: b};
 	});
 
-var _user$project$Spelling$onKeyUp = function (options) {
+var _user$project$Events$onKeyUp = function (options) {
 	var filter = F2(
 		function (optionsToCheck, code) {
 			filter:
@@ -7924,50 +7924,58 @@ var _user$project$Spelling$onKeyUp = function (options) {
 		filter(options));
 	return A2(_elm_lang$html$Html_Events$on, 'keyup', keyCodes);
 };
-var _user$project$Spelling$onEnterOrLeft = F2(
-	function (enter, escape) {
-		return _user$project$Spelling$onKeyUp(
-			_elm_lang$core$Native_List.fromArray(
-				[
-					{ctor: '_Tuple2', _0: 13, _1: enter},
-					{ctor: '_Tuple2', _0: 27, _1: escape}
-				]));
-	});
-var _user$project$Spelling$onDownArrow = function (msg) {
-	return _user$project$Spelling$onKeyUp(
+var _user$project$Events$onBackOrRight = function (msg) {
+	return _user$project$Events$onKeyUp(
+		_elm_lang$core$Native_List.fromArray(
+			[
+				{ctor: '_Tuple2', _0: 39, _1: msg},
+				{ctor: '_Tuple2', _0: 8, _1: msg}
+			]));
+};
+var _user$project$Events$onEnterOrLeft = function (msg) {
+	return _user$project$Events$onKeyUp(
+		_elm_lang$core$Native_List.fromArray(
+			[
+				{ctor: '_Tuple2', _0: 13, _1: msg},
+				{ctor: '_Tuple2', _0: 37, _1: msg}
+			]));
+};
+var _user$project$Events$onDownArrow = function (msg) {
+	return _user$project$Events$onKeyUp(
 		_elm_lang$core$Native_List.fromArray(
 			[
 				{ctor: '_Tuple2', _0: 40, _1: msg}
 			]));
 };
-var _user$project$Spelling$onUpArrow = function (msg) {
-	return _user$project$Spelling$onKeyUp(
+var _user$project$Events$onUpArrow = function (msg) {
+	return _user$project$Events$onKeyUp(
 		_elm_lang$core$Native_List.fromArray(
 			[
 				{ctor: '_Tuple2', _0: 38, _1: msg}
 			]));
 };
-var _user$project$Spelling$onLeftArrow = function (msg) {
-	return _user$project$Spelling$onKeyUp(
+var _user$project$Events$onLeftArrow = function (msg) {
+	return _user$project$Events$onKeyUp(
 		_elm_lang$core$Native_List.fromArray(
 			[
 				{ctor: '_Tuple2', _0: 37, _1: msg}
 			]));
 };
-var _user$project$Spelling$onRightArrow = function (msg) {
-	return _user$project$Spelling$onKeyUp(
+var _user$project$Events$onRightArrow = function (msg) {
+	return _user$project$Events$onKeyUp(
 		_elm_lang$core$Native_List.fromArray(
 			[
 				{ctor: '_Tuple2', _0: 39, _1: msg}
 			]));
 };
-var _user$project$Spelling$onEnter = function (msg) {
-	return _user$project$Spelling$onKeyUp(
+var _user$project$Events$onEnter = function (msg) {
+	return _user$project$Events$onKeyUp(
 		_elm_lang$core$Native_List.fromArray(
 			[
 				{ctor: '_Tuple2', _0: 13, _1: msg}
 			]));
 };
+
 var _user$project$Spelling$check = _elm_lang$core$Native_Platform.outgoingPort(
 	'check',
 	function (v) {
@@ -8037,14 +8045,14 @@ var _user$project$Spelling$init = {
 };
 var _user$project$Spelling$update = F2(
 	function (msg, model) {
-		var _p1 = msg;
-		switch (_p1.ctor) {
+		var _p0 = msg;
+		switch (_p0.ctor) {
 			case 'Change':
 				return {
 					ctor: '_Tuple2',
 					_0: A3(
 						_user$project$Spelling$Model,
-						_p1._0,
+						_p0._0,
 						_elm_lang$core$Native_List.fromArray(
 							[]),
 						model.tabs),
@@ -8059,27 +8067,29 @@ var _user$project$Spelling$update = F2(
 			case 'Suggest':
 				return {
 					ctor: '_Tuple2',
-					_0: A3(_user$project$Spelling$Model, model.word, _p1._0, model.tabs),
+					_0: A3(_user$project$Spelling$Model, model.word, _p0._0, model.tabs),
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
 			case 'Tabs':
 				return {
 					ctor: '_Tuple2',
-					_0: A3(_user$project$Spelling$Model, model.word, model.suggestions, _p1._0),
+					_0: A3(_user$project$Spelling$Model, model.word, model.suggestions, _p0._0),
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
 			case 'Close':
 				return {
 					ctor: '_Tuple2',
 					_0: model,
-					_1: _user$project$Spelling$close(_p1._0)
+					_1: _user$project$Spelling$close(_p0._0)
 				};
-			default:
+			case 'Activate':
 				return {
 					ctor: '_Tuple2',
 					_0: model,
-					_1: _user$project$Spelling$activate(_p1._0)
+					_1: _user$project$Spelling$activate(_p0._0)
 				};
+			default:
+				return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
 		}
 	});
 var _user$project$Spelling$Activate = function (a) {
@@ -8088,15 +8098,42 @@ var _user$project$Spelling$Activate = function (a) {
 var _user$project$Spelling$Close = function (a) {
 	return {ctor: 'Close', _0: a};
 };
+var _user$project$Spelling$Tabs = function (a) {
+	return {ctor: 'Tabs', _0: a};
+};
+var _user$project$Spelling$Suggest = function (a) {
+	return {ctor: 'Suggest', _0: a};
+};
+var _user$project$Spelling$subscriptions = function (model) {
+	return _elm_lang$core$Platform_Sub$batch(
+		_elm_lang$core$Native_List.fromArray(
+			[
+				_user$project$Spelling$suggestions(_user$project$Spelling$Suggest),
+				_user$project$Spelling$initialTabs(_user$project$Spelling$Tabs)
+			]));
+};
+var _user$project$Spelling$Check = {ctor: 'Check'};
+var _user$project$Spelling$Change = function (a) {
+	return {ctor: 'Change', _0: a};
+};
+var _user$project$Spelling$NoOp = {ctor: 'NoOp'};
+var _user$project$Spelling$onKeyboardEvent = function (payload) {
+	var tagger = function (code) {
+		return (_elm_lang$core$Native_Utils.eq(code, 13) || _elm_lang$core$Native_Utils.eq(code, 37)) ? _user$project$Spelling$Activate(payload) : ((_elm_lang$core$Native_Utils.eq(code, 8) || _elm_lang$core$Native_Utils.eq(code, 39)) ? _user$project$Spelling$Close(payload) : _user$project$Spelling$NoOp);
+	};
+	return A2(
+		_elm_lang$html$Html_Events$on,
+		'keydown',
+		A2(_elm_lang$core$Json_Decode$map, tagger, _elm_lang$html$Html_Events$keyCode));
+};
 var _user$project$Spelling$toLi = function (tab) {
 	return A2(
 		_elm_lang$html$Html$a,
 		_elm_lang$core$Native_List.fromArray(
 			[
-				_user$project$Spelling$onRightArrow(
-				_user$project$Spelling$Close(tab.tabID)),
-				_user$project$Spelling$onLeftArrow(
+				_elm_lang$html$Html_Events$onClick(
 				_user$project$Spelling$Activate(tab.tabID)),
+				_user$project$Spelling$onKeyboardEvent(tab.tabID),
 				_elm_lang$html$Html_Attributes$tabindex(1),
 				_elm_lang$html$Html_Attributes$class('grow')
 			]),
@@ -8139,7 +8176,7 @@ var _user$project$Spelling$toLi = function (tab) {
 						_elm_lang$html$Html$div,
 						_elm_lang$core$Native_List.fromArray(
 							[
-								_elm_lang$html$Html_Attributes$class('w-20 red'),
+								_elm_lang$html$Html_Attributes$class('w-20 bg-light-silver red'),
 								_elm_lang$html$Html_Events$onClick(
 								_user$project$Spelling$Close(tab.tabID))
 							]),
@@ -8170,24 +8207,6 @@ var _user$project$Spelling$tabsList = function (model) {
 				_elm_lang$html$Html_Attributes$class('pa0 flex-column flex self-center w-100')
 			]),
 		A2(_elm_lang$core$List$map, _user$project$Spelling$toLi, model.tabs));
-};
-var _user$project$Spelling$Tabs = function (a) {
-	return {ctor: 'Tabs', _0: a};
-};
-var _user$project$Spelling$Suggest = function (a) {
-	return {ctor: 'Suggest', _0: a};
-};
-var _user$project$Spelling$subscriptions = function (model) {
-	return _elm_lang$core$Platform_Sub$batch(
-		_elm_lang$core$Native_List.fromArray(
-			[
-				_user$project$Spelling$suggestions(_user$project$Spelling$Suggest),
-				_user$project$Spelling$initialTabs(_user$project$Spelling$Tabs)
-			]));
-};
-var _user$project$Spelling$Check = {ctor: 'Check'};
-var _user$project$Spelling$Change = function (a) {
-	return {ctor: 'Change', _0: a};
 };
 var _user$project$Spelling$view = function (model) {
 	return A2(
