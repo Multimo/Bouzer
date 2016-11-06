@@ -5,28 +5,33 @@ import Html.App as App
 
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
--- import String
 import List exposing (..)
+import Dom exposing (..)
+import Task exposing (..)
+
 -- import Debug
-import Events exposing (..)
+-- import Events exposing (..)
 
 import Html.Events exposing (..)
 import Json.Decode exposing (..)
 
--- onKeyUp : (Int -> msg) -> Attribute msg
--- onKeyUp tagger =
---   on "keyup" (Json.map tagger keyCode)
-onKeyboardEvent payload =
+onKeyboardEvent: Int -> Attribute Msg
+onKeyboardEvent tabID =
     let
         tagger code =
             if code == 13 || code == 37 then
-              Activate payload
+              Activate tabID
             else if code == 8 || code == 39 then
-              Close payload
+              Close tabID
+            else if code == 38 || code == 9 then
+              CycleUp
+            else if code == 40 then
+              CycleDown
             else
               NoOp
     in
         on "keydown" (Json.Decode.map tagger keyCode)
+
 
 
 main : Program Never
@@ -44,6 +49,7 @@ main =
 type alias TabsList =
   { url : String
   , title : String
+  , index : Int
   , active : Bool
   , tabID : Int
   , favIconUrl : String
@@ -54,43 +60,34 @@ type alias Model =
   { word : String
   , suggestions : List String
   , tabs : List TabsList
+  , tabIndex : Int
   }
 
 init : (Model, Cmd Msg)
 init =
-  (Model "" [] [], Cmd.none)
+  (Model "" [] [] 0, Cmd.none)
 
 
 -- UPDATE
 
 type Msg
-  = NoOp
-  | Change String
-  | Check
-  | Suggest (List String)
-  | Tabs (List TabsList)
+  = Tabs (List TabsList)
   | Close Int
   | Activate Int
+  | CycleUp
+  | CycleDown
+  | NoOp
 
 
-port check : String -> Cmd msg
+
 port close : Int -> Cmd msg
 port activate : Int -> Cmd msg
 
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
   case msg of
-    Change newWord ->
-      ( Model newWord [] model.tabs, Cmd.none )
-
-    Check ->
-      ( model, check model.word )
-
-    Suggest newSuggestions ->
-      ( Model model.word newSuggestions model.tabs, Cmd.none )
-
-    Tabs tabs ->
-        ( Model model.word model.suggestions tabs, Cmd.none )
+    Tabs val ->
+      ({ model | tabs = val }, Cmd.none )
 
     Close tabId ->
       ( model, close tabId )
@@ -98,52 +95,72 @@ update msg model =
     Activate tabId ->
       ( model, activate tabId )
 
+    CycleUp ->
+      let
+          cmd =
+              focus ( toString ( model.tabIndex - 1 ) )
+                |> Task.perform (\error -> NoOp ) (\() -> NoOp)
+      in
+          ({ model | tabIndex = ( model.tabIndex - 1 ) }, cmd )
+
+    CycleDown ->
+      let
+          cmd =
+              focus ( toString ( model.tabIndex + 1 ) )
+                  |> Task.perform (\error -> NoOp ) (\() -> NoOp)
+      in
+          ({ model | tabIndex = ( model.tabIndex + 1 ) }, cmd )
+
     NoOp ->
       ( model, Cmd.none )
 
 
+
+
 -- SUBSCRIPTIONS
 
-port suggestions : (List String -> msg) -> Sub msg
+-- port suggestions : (List String -> msg) -> Sub msg
 port initialTabs : ( List TabsList -> msg ) -> Sub msg
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
   Sub.batch
-  [ suggestions Suggest
-  , initialTabs Tabs
+  [ initialTabs Tabs
   ]
 
 
 
 -- VIEW
+isFirst: number -> Bool
+isFirst index =
+    if index == 0 then
+      True
+    else
+      False
 
 
-
-
--- view : Model -> Html msg
+view : Model -> Html Msg
 view model =
   div [ class "pa2 w-100 flex flex-column container bg-lightest-blue" ]
-    [ input [ class "w-60 self-center ma1 br3", onInput Change ] []
-    , button [ class "w-40 self-center ma1 br3", onSubmit Check ] [ text "Check" ]
+    [ input [ class "w-60 self-center ma1 br3", tabindex -1 ] []
+    , button [ class "w-40 self-center ma1 br3", tabindex -1 ] [ text "Check" ]
     , tabsList model
     ]
 
--- tabsList : Model -> Html msg
+tabsList : Model -> Html Msg
 tabsList model =
     ul [ class "pa0 flex-column flex self-center w-100" ]
     ( List.map toLi model.tabs )
 
-
-
-
--- toLi : Model -> Html msg
+toLi : TabsList -> Html Msg
 toLi tab =
-    a [  onClick ( Activate tab.tabID )
+    div [  onClick ( Activate tab.tabID )
     , onKeyboardEvent tab.tabID
     , tabindex 1
-    , class "grow" ] [
-    li [ class ( "list flex flex-row pa2 w-100 items-center " ++ ( if tab.active then "bg-washed-green" else "bg-lightest-blue" ) ) ]
+    , autofocus (isFirst tab.index)
+    , class ( "grow tabsli " ++ ( if tab.active then "bg-washed-green" else "bg-washed-blue" ) )
+    , id ( toString tab.index )  ] [
+    li [ class "list flex flex-row pa2 w-100 items-center"]
     [ img [ src tab.favIconUrl, height 25, width 25, class "pl2 pr2" ] [ ]
     , div [ class "w-60" ] [ text tab.title ]
     , div [ class "w-20 bg-light-silver red", onClick ( Close tab.tabID ) ] [ text  "X" ]

@@ -1,8 +1,6 @@
-var _user$project$Spelling$check = _elm_lang$core$Native_Platform.outgoingPort(
-	'check',
-	function (v) {
-		return v;
-	});
+var _user$project$Spelling$isFirst = function (index) {
+	return _elm_lang$core$Native_Utils.eq(index, 0) ? true : false;
+};
 var _user$project$Spelling$close = _elm_lang$core$Native_Platform.outgoingPort(
 	'close',
 	function (v) {
@@ -13,9 +11,6 @@ var _user$project$Spelling$activate = _elm_lang$core$Native_Platform.outgoingPor
 	function (v) {
 		return v;
 	});
-var _user$project$Spelling$suggestions = _elm_lang$core$Native_Platform.incomingPort(
-	'suggestions',
-	_elm_lang$core$Json_Decode$list(_elm_lang$core$Json_Decode$string));
 var _user$project$Spelling$initialTabs = _elm_lang$core$Native_Platform.incomingPort(
 	'initialTabs',
 	_elm_lang$core$Json_Decode$list(
@@ -29,73 +24,59 @@ var _user$project$Spelling$initialTabs = _elm_lang$core$Native_Platform.incoming
 					function (title) {
 						return A2(
 							_elm_lang$core$Json_Decode$andThen,
-							A2(_elm_lang$core$Json_Decode_ops[':='], 'active', _elm_lang$core$Json_Decode$bool),
-							function (active) {
+							A2(_elm_lang$core$Json_Decode_ops[':='], 'index', _elm_lang$core$Json_Decode$int),
+							function (index) {
 								return A2(
 									_elm_lang$core$Json_Decode$andThen,
-									A2(_elm_lang$core$Json_Decode_ops[':='], 'tabID', _elm_lang$core$Json_Decode$int),
-									function (tabID) {
+									A2(_elm_lang$core$Json_Decode_ops[':='], 'active', _elm_lang$core$Json_Decode$bool),
+									function (active) {
 										return A2(
 											_elm_lang$core$Json_Decode$andThen,
-											A2(_elm_lang$core$Json_Decode_ops[':='], 'favIconUrl', _elm_lang$core$Json_Decode$string),
-											function (favIconUrl) {
-												return _elm_lang$core$Json_Decode$succeed(
-													{url: url, title: title, active: active, tabID: tabID, favIconUrl: favIconUrl});
+											A2(_elm_lang$core$Json_Decode_ops[':='], 'tabID', _elm_lang$core$Json_Decode$int),
+											function (tabID) {
+												return A2(
+													_elm_lang$core$Json_Decode$andThen,
+													A2(_elm_lang$core$Json_Decode_ops[':='], 'favIconUrl', _elm_lang$core$Json_Decode$string),
+													function (favIconUrl) {
+														return _elm_lang$core$Json_Decode$succeed(
+															{url: url, title: title, index: index, active: active, tabID: tabID, favIconUrl: favIconUrl});
+													});
 											});
 									});
 							});
 					});
 			})));
-var _user$project$Spelling$TabsList = F5(
-	function (a, b, c, d, e) {
-		return {url: a, title: b, active: c, tabID: d, favIconUrl: e};
+var _user$project$Spelling$TabsList = F6(
+	function (a, b, c, d, e, f) {
+		return {url: a, title: b, index: c, active: d, tabID: e, favIconUrl: f};
 	});
-var _user$project$Spelling$Model = F3(
-	function (a, b, c) {
-		return {word: a, suggestions: b, tabs: c};
+var _user$project$Spelling$Model = F4(
+	function (a, b, c, d) {
+		return {word: a, suggestions: b, tabs: c, tabIndex: d};
 	});
 var _user$project$Spelling$init = {
 	ctor: '_Tuple2',
-	_0: A3(
+	_0: A4(
 		_user$project$Spelling$Model,
 		'',
 		_elm_lang$core$Native_List.fromArray(
 			[]),
 		_elm_lang$core$Native_List.fromArray(
-			[])),
+			[]),
+		0),
 	_1: _elm_lang$core$Platform_Cmd$none
 };
+var _user$project$Spelling$NoOp = {ctor: 'NoOp'};
 var _user$project$Spelling$update = F2(
 	function (msg, model) {
 		var _p0 = msg;
 		switch (_p0.ctor) {
-			case 'Change':
-				return {
-					ctor: '_Tuple2',
-					_0: A3(
-						_user$project$Spelling$Model,
-						_p0._0,
-						_elm_lang$core$Native_List.fromArray(
-							[]),
-						model.tabs),
-					_1: _elm_lang$core$Platform_Cmd$none
-				};
-			case 'Check':
-				return {
-					ctor: '_Tuple2',
-					_0: model,
-					_1: _user$project$Spelling$check(model.word)
-				};
-			case 'Suggest':
-				return {
-					ctor: '_Tuple2',
-					_0: A3(_user$project$Spelling$Model, model.word, _p0._0, model.tabs),
-					_1: _elm_lang$core$Platform_Cmd$none
-				};
 			case 'Tabs':
 				return {
 					ctor: '_Tuple2',
-					_0: A3(_user$project$Spelling$Model, model.word, model.suggestions, _p0._0),
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{tabs: _p0._0}),
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
 			case 'Close':
@@ -110,38 +91,59 @@ var _user$project$Spelling$update = F2(
 					_0: model,
 					_1: _user$project$Spelling$activate(_p0._0)
 				};
+			case 'CycleUp':
+				var cmd = A3(
+					_elm_lang$core$Task$perform,
+					function (error) {
+						return _user$project$Spelling$NoOp;
+					},
+					function (_p1) {
+						var _p2 = _p1;
+						return _user$project$Spelling$NoOp;
+					},
+					_elm_lang$dom$Dom$focus(
+						_elm_lang$core$Basics$toString(model.tabIndex - 1)));
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{tabIndex: model.tabIndex - 1}),
+					_1: cmd
+				};
+			case 'CycleDown':
+				var cmd = A3(
+					_elm_lang$core$Task$perform,
+					function (error) {
+						return _user$project$Spelling$NoOp;
+					},
+					function (_p3) {
+						var _p4 = _p3;
+						return _user$project$Spelling$NoOp;
+					},
+					_elm_lang$dom$Dom$focus(
+						_elm_lang$core$Basics$toString(model.tabIndex + 1)));
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{tabIndex: model.tabIndex + 1}),
+					_1: cmd
+				};
 			default:
 				return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
 		}
 	});
+var _user$project$Spelling$CycleDown = {ctor: 'CycleDown'};
+var _user$project$Spelling$CycleUp = {ctor: 'CycleUp'};
 var _user$project$Spelling$Activate = function (a) {
 	return {ctor: 'Activate', _0: a};
 };
 var _user$project$Spelling$Close = function (a) {
 	return {ctor: 'Close', _0: a};
 };
-var _user$project$Spelling$Tabs = function (a) {
-	return {ctor: 'Tabs', _0: a};
-};
-var _user$project$Spelling$Suggest = function (a) {
-	return {ctor: 'Suggest', _0: a};
-};
-var _user$project$Spelling$subscriptions = function (model) {
-	return _elm_lang$core$Platform_Sub$batch(
-		_elm_lang$core$Native_List.fromArray(
-			[
-				_user$project$Spelling$suggestions(_user$project$Spelling$Suggest),
-				_user$project$Spelling$initialTabs(_user$project$Spelling$Tabs)
-			]));
-};
-var _user$project$Spelling$Check = {ctor: 'Check'};
-var _user$project$Spelling$Change = function (a) {
-	return {ctor: 'Change', _0: a};
-};
-var _user$project$Spelling$NoOp = {ctor: 'NoOp'};
-var _user$project$Spelling$onKeyboardEvent = function (payload) {
+var _user$project$Spelling$onKeyboardEvent = function (tabID) {
 	var tagger = function (code) {
-		return (_elm_lang$core$Native_Utils.eq(code, 13) || _elm_lang$core$Native_Utils.eq(code, 37)) ? _user$project$Spelling$Activate(payload) : ((_elm_lang$core$Native_Utils.eq(code, 8) || _elm_lang$core$Native_Utils.eq(code, 39)) ? _user$project$Spelling$Close(payload) : _user$project$Spelling$NoOp);
+		return (_elm_lang$core$Native_Utils.eq(code, 13) || _elm_lang$core$Native_Utils.eq(code, 37)) ? _user$project$Spelling$Activate(tabID) : ((_elm_lang$core$Native_Utils.eq(code, 8) || _elm_lang$core$Native_Utils.eq(code, 39)) ? _user$project$Spelling$Close(tabID) : ((_elm_lang$core$Native_Utils.eq(code, 38) || _elm_lang$core$Native_Utils.eq(code, 9)) ? _user$project$Spelling$CycleUp : (_elm_lang$core$Native_Utils.eq(code, 40) ? _user$project$Spelling$CycleDown : _user$project$Spelling$NoOp)));
 	};
 	return A2(
 		_elm_lang$html$Html_Events$on,
@@ -150,14 +152,22 @@ var _user$project$Spelling$onKeyboardEvent = function (payload) {
 };
 var _user$project$Spelling$toLi = function (tab) {
 	return A2(
-		_elm_lang$html$Html$a,
+		_elm_lang$html$Html$div,
 		_elm_lang$core$Native_List.fromArray(
 			[
 				_elm_lang$html$Html_Events$onClick(
 				_user$project$Spelling$Activate(tab.tabID)),
 				_user$project$Spelling$onKeyboardEvent(tab.tabID),
 				_elm_lang$html$Html_Attributes$tabindex(1),
-				_elm_lang$html$Html_Attributes$class('grow')
+				_elm_lang$html$Html_Attributes$autofocus(
+				_user$project$Spelling$isFirst(tab.index)),
+				_elm_lang$html$Html_Attributes$class(
+				A2(
+					_elm_lang$core$Basics_ops['++'],
+					'grow tabsli ',
+					tab.active ? 'bg-washed-green' : 'bg-washed-blue')),
+				_elm_lang$html$Html_Attributes$id(
+				_elm_lang$core$Basics$toString(tab.index))
 			]),
 		_elm_lang$core$Native_List.fromArray(
 			[
@@ -165,11 +175,7 @@ var _user$project$Spelling$toLi = function (tab) {
 				_elm_lang$html$Html$li,
 				_elm_lang$core$Native_List.fromArray(
 					[
-						_elm_lang$html$Html_Attributes$class(
-						A2(
-							_elm_lang$core$Basics_ops['++'],
-							'list flex flex-row pa2 w-100 items-center ',
-							tab.active ? 'bg-washed-green' : 'bg-lightest-blue'))
+						_elm_lang$html$Html_Attributes$class('list flex flex-row pa2 w-100 items-center')
 					]),
 				_elm_lang$core$Native_List.fromArray(
 					[
@@ -244,7 +250,7 @@ var _user$project$Spelling$view = function (model) {
 				_elm_lang$core$Native_List.fromArray(
 					[
 						_elm_lang$html$Html_Attributes$class('w-60 self-center ma1 br3'),
-						_elm_lang$html$Html_Events$onInput(_user$project$Spelling$Change)
+						_elm_lang$html$Html_Attributes$tabindex(-1)
 					]),
 				_elm_lang$core$Native_List.fromArray(
 					[])),
@@ -253,13 +259,23 @@ var _user$project$Spelling$view = function (model) {
 				_elm_lang$core$Native_List.fromArray(
 					[
 						_elm_lang$html$Html_Attributes$class('w-40 self-center ma1 br3'),
-						_elm_lang$html$Html_Events$onSubmit(_user$project$Spelling$Check)
+						_elm_lang$html$Html_Attributes$tabindex(-1)
 					]),
 				_elm_lang$core$Native_List.fromArray(
 					[
 						_elm_lang$html$Html$text('Check')
 					])),
 				_user$project$Spelling$tabsList(model)
+			]));
+};
+var _user$project$Spelling$Tabs = function (a) {
+	return {ctor: 'Tabs', _0: a};
+};
+var _user$project$Spelling$subscriptions = function (model) {
+	return _elm_lang$core$Platform_Sub$batch(
+		_elm_lang$core$Native_List.fromArray(
+			[
+				_user$project$Spelling$initialTabs(_user$project$Spelling$Tabs)
 			]));
 };
 var _user$project$Spelling$main = {

@@ -1,0 +1,15 @@
+.tabsli:focus {
+  background: #3391cc;
+}
+
+.tabsli {
+  transition: all .4s;
+}
+body {
+overflow-x: hidden;
+background-color: #FFCCCC;
+}
+.container {
+  background: green !important;
+  min-width: 300px;
+}
