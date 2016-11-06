@@ -14,14 +14,14 @@ firebase.initializeApp(config);
 
 var db = firebase.database();
 var ref = db.ref("root/");
-var usersRef = ref.child("tabs");
+var tabsRef = ref.child("tabs");
 
 function handleUpdated(tabId, changeInfo, tabInfo) {
-  console.log("Updated tab: " + tabId);
-  console.log("Changed attributes: ");
-  console.log(changeInfo);
-  console.log("New tab Info: ");
-  console.log(tabInfo);
+  // console.log("Updated tab: " + tabId);
+  // console.log("Changed attributes: ");
+  // console.log(changeInfo);
+  // console.log("New tab Info: ");
+  // console.log(tabInfo);
 
   chrome.tabs.query({
       currentWindow: true
@@ -63,7 +63,6 @@ app.ports.activate.subscribe(function(tab) {
 
 
 //Send query and to chrome, ask for tabs and send it to elm
-
 chrome.tabs.query({
     currentWindow: true
   }, function(data) {
@@ -71,7 +70,7 @@ chrome.tabs.query({
   });
 
 
-
+// main update function which sends data to elm and firebase
 function updateState(data) {
   var tabsElm = [];
   return data.map(function(tab){
@@ -85,8 +84,8 @@ function updateState(data) {
       'favIconUrl' : tab.favIconUrl ? tab.favIconUrl : '../../icons/icon48.png'
     };
     tabsElm.push(tabz);
-    usersRef.set(tabsElm);
     return tabsElm;
   }),
+  tabsRef.set(tabsElm),
   app.ports.initialTabs.send(tabsElm);
 }
