@@ -6,6 +6,11 @@ var _user$project$Spelling$close = _elm_lang$core$Native_Platform.outgoingPort(
 	function (v) {
 		return v;
 	});
+var _user$project$Spelling$save = _elm_lang$core$Native_Platform.outgoingPort(
+	'save',
+	function (v) {
+		return {url: v.url, title: v.title, index: v.index, active: v.active, tabID: v.tabID, favIconUrl: v.favIconUrl};
+	});
 var _user$project$Spelling$activate = _elm_lang$core$Native_Platform.outgoingPort(
 	'activate',
 	function (v) {
@@ -129,10 +134,19 @@ var _user$project$Spelling$update = F2(
 						{tabIndex: model.tabIndex + 1}),
 					_1: cmd
 				};
+			case 'Save':
+				return {
+					ctor: '_Tuple2',
+					_0: model,
+					_1: _user$project$Spelling$save(_p0._0)
+				};
 			default:
 				return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
 		}
 	});
+var _user$project$Spelling$Save = function (a) {
+	return {ctor: 'Save', _0: a};
+};
 var _user$project$Spelling$CycleDown = {ctor: 'CycleDown'};
 var _user$project$Spelling$CycleUp = {ctor: 'CycleUp'};
 var _user$project$Spelling$Activate = function (a) {
@@ -164,8 +178,8 @@ var _user$project$Spelling$toLi = function (tab) {
 				_elm_lang$html$Html_Attributes$class(
 				A2(
 					_elm_lang$core$Basics_ops['++'],
-					'grow tabsli ',
-					tab.active ? 'bg-washed-green' : 'bg-washed-blue')),
+					' tabsli ',
+					tab.active ? 'active' : '')),
 				_elm_lang$html$Html_Attributes$id(
 				_elm_lang$core$Basics$toString(tab.index))
 			]),
@@ -204,7 +218,7 @@ var _user$project$Spelling$toLi = function (tab) {
 						_elm_lang$html$Html$div,
 						_elm_lang$core$Native_List.fromArray(
 							[
-								_elm_lang$html$Html_Attributes$class('w-20 bg-light-silver red'),
+								_elm_lang$html$Html_Attributes$class('w-20 tc red'),
 								_elm_lang$html$Html_Events$onClick(
 								_user$project$Spelling$Close(tab.tabID))
 							]),
@@ -216,13 +230,13 @@ var _user$project$Spelling$toLi = function (tab) {
 						_elm_lang$html$Html$div,
 						_elm_lang$core$Native_List.fromArray(
 							[
-								_elm_lang$html$Html_Attributes$class('w-10'),
+								_elm_lang$html$Html_Attributes$class('w-20'),
 								_elm_lang$html$Html_Events$onClick(
-								_user$project$Spelling$Activate(tab.tabID))
+								_user$project$Spelling$Save(tab))
 							]),
 						_elm_lang$core$Native_List.fromArray(
 							[
-								_elm_lang$html$Html$text('0')
+								_elm_lang$html$Html$text('save')
 							]))
 					]))
 			]));
@@ -245,26 +259,6 @@ var _user$project$Spelling$view = function (model) {
 			]),
 		_elm_lang$core$Native_List.fromArray(
 			[
-				A2(
-				_elm_lang$html$Html$input,
-				_elm_lang$core$Native_List.fromArray(
-					[
-						_elm_lang$html$Html_Attributes$class('w-60 self-center ma1 br3'),
-						_elm_lang$html$Html_Attributes$tabindex(-1)
-					]),
-				_elm_lang$core$Native_List.fromArray(
-					[])),
-				A2(
-				_elm_lang$html$Html$button,
-				_elm_lang$core$Native_List.fromArray(
-					[
-						_elm_lang$html$Html_Attributes$class('w-40 self-center ma1 br3'),
-						_elm_lang$html$Html_Attributes$tabindex(-1)
-					]),
-				_elm_lang$core$Native_List.fromArray(
-					[
-						_elm_lang$html$Html$text('Check')
-					])),
 				_user$project$Spelling$tabsList(model)
 			]));
 };

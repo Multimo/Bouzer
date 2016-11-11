@@ -47,6 +47,11 @@ app.ports.close.subscribe(function(tab) {
       });
 });
 
+app.ports.save.subscribe(function(tab) {
+    console.log(tab);
+    // send back new state here
+      tabsRef.set(tabsElm)
+});
 
 app.ports.activate.subscribe(function(tab) {
     // make tab active here

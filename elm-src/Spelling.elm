@@ -76,11 +76,11 @@ type Msg
   | Activate Int
   | CycleUp
   | CycleDown
+  | Save TabsList
   | NoOp
 
-
-
 port close : Int -> Cmd msg
+port save : TabsList -> Cmd msg
 port activate : Int -> Cmd msg
 
 update : Msg -> Model -> (Model, Cmd Msg)
@@ -110,6 +110,9 @@ update msg model =
                   |> Task.perform (\error -> NoOp ) (\() -> NoOp)
       in
           ({ model | tabIndex = ( model.tabIndex + 1 ) }, cmd )
+
+    Save tab ->
+      (model, save tab )
 
     NoOp ->
       ( model, Cmd.none )
@@ -142,9 +145,10 @@ isFirst index =
 view : Model -> Html Msg
 view model =
   div [ class "pa2 w-100 flex flex-column container bg-lightest-blue" ]
-    [ input [ class "w-60 self-center ma1 br3", tabindex -1 ] []
-    , button [ class "w-40 self-center ma1 br3", tabindex -1 ] [ text "Check" ]
-    , tabsList model
+    [
+    --input [ class "w-60 self-center ma1 br3", tabindex -1 ] []
+    -- , button [ class "w-40 self-center ma1 br3", tabindex -1 ] [ text "Check" ]
+    tabsList model
     ]
 
 tabsList : Model -> Html Msg
@@ -158,12 +162,12 @@ toLi tab =
     , onKeyboardEvent tab.tabID
     , tabindex 1
     , autofocus (isFirst tab.index)
-    , class ( "grow tabsli " ++ ( if tab.active then "bg-washed-green" else "bg-washed-blue" ) )
+    , class ( " tabsli " ++ ( if tab.active then "active" else "" ) )
     , id ( toString tab.index )  ] [
     li [ class "list flex flex-row pa2 w-100 items-center"]
     [ img [ src tab.favIconUrl, height 25, width 25, class "pl2 pr2" ] [ ]
     , div [ class "w-60" ] [ text tab.title ]
-    , div [ class "w-20 bg-light-silver red", onClick ( Close tab.tabID ) ] [ text  "X" ]
-    , div [ class "w-10", onClick ( Activate tab.tabID ) ] [ text  "0"  ]
+    , div [ class "w-20 tc red", onClick ( Close tab.tabID ) ] [ text  "X" ]
+    , div [ class "w-20", onClick ( Save tab ) ] [ text  "save"  ]
     ]
   ]

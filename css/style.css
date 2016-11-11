@@ -1,15 +1,28 @@
 .tabsli:focus {
-  background: #3391cc;
+  /*background: #3391cc;*/
+  opacity: 1;
+  background-color: rgb(255, 184, 140);
+  background-image: linear-gradient(to left, rgb(222, 98, 98), rgb(255, 184, 140));
+  box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
 }
 
 .tabsli {
-  transition: all .4s;
+  transition: all .7s;
+  outline: none;
+  color: #ffffff;
+  font-family: 'Raleway', sans-serif;
 }
 body {
 overflow-x: hidden;
 background-color: #FFCCCC;
 }
 .container {
-  background: green !important;
-  min-width: 300px;
+  background-color: rgb(65, 67, 69);
+  background-image: linear-gradient(to left, rgb(35, 37, 38), rgb(65, 67, 69));
+  min-width: 400px;
+}
+
+.active {
+  background-color: rgb(60, 211, 173);
+  background-image: linear-gradient(to left, rgb(76, 184, 196), rgb(60, 211, 173));
 }
