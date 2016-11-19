@@ -8322,12 +8322,17 @@ var _user$project$Spelling$close = _elm_lang$core$Native_Platform.outgoingPort(
 var _user$project$Spelling$save = _elm_lang$core$Native_Platform.outgoingPort(
 	'save',
 	function (v) {
-		return {url: v.url, title: v.title, index: v.index, active: v.active, tabID: v.tabID, favIconUrl: v.favIconUrl};
+		return {url: v.url, title: v.title, index: v.index, active: v.active, tabID: v.tabID, saved: v.saved, favIconUrl: v.favIconUrl};
 	});
 var _user$project$Spelling$activate = _elm_lang$core$Native_Platform.outgoingPort(
 	'activate',
 	function (v) {
 		return v;
+	});
+var _user$project$Spelling$delete = _elm_lang$core$Native_Platform.outgoingPort(
+	'delete',
+	function (v) {
+		return {url: v.url, title: v.title, index: v.index, active: v.active, tabID: v.tabID, saved: v.saved, favIconUrl: v.favIconUrl};
 	});
 var _user$project$Spelling$initialTabs = _elm_lang$core$Native_Platform.incomingPort(
 	'initialTabs',
@@ -8354,34 +8359,86 @@ var _user$project$Spelling$initialTabs = _elm_lang$core$Native_Platform.incoming
 											function (tabID) {
 												return A2(
 													_elm_lang$core$Json_Decode$andThen,
-													A2(_elm_lang$core$Json_Decode_ops[':='], 'favIconUrl', _elm_lang$core$Json_Decode$string),
-													function (favIconUrl) {
-														return _elm_lang$core$Json_Decode$succeed(
-															{url: url, title: title, index: index, active: active, tabID: tabID, favIconUrl: favIconUrl});
+													A2(_elm_lang$core$Json_Decode_ops[':='], 'saved', _elm_lang$core$Json_Decode$bool),
+													function (saved) {
+														return A2(
+															_elm_lang$core$Json_Decode$andThen,
+															A2(_elm_lang$core$Json_Decode_ops[':='], 'favIconUrl', _elm_lang$core$Json_Decode$string),
+															function (favIconUrl) {
+																return _elm_lang$core$Json_Decode$succeed(
+																	{url: url, title: title, index: index, active: active, tabID: tabID, saved: saved, favIconUrl: favIconUrl});
+															});
 													});
 											});
 									});
 							});
 					});
 			})));
-var _user$project$Spelling$TabsList = F6(
-	function (a, b, c, d, e, f) {
-		return {url: a, title: b, index: c, active: d, tabID: e, favIconUrl: f};
+var _user$project$Spelling$savedTabs = _elm_lang$core$Native_Platform.incomingPort(
+	'savedTabs',
+	_elm_lang$core$Json_Decode$list(
+		A2(
+			_elm_lang$core$Json_Decode$andThen,
+			A2(_elm_lang$core$Json_Decode_ops[':='], 'url', _elm_lang$core$Json_Decode$string),
+			function (url) {
+				return A2(
+					_elm_lang$core$Json_Decode$andThen,
+					A2(_elm_lang$core$Json_Decode_ops[':='], 'title', _elm_lang$core$Json_Decode$string),
+					function (title) {
+						return A2(
+							_elm_lang$core$Json_Decode$andThen,
+							A2(_elm_lang$core$Json_Decode_ops[':='], 'index', _elm_lang$core$Json_Decode$int),
+							function (index) {
+								return A2(
+									_elm_lang$core$Json_Decode$andThen,
+									A2(_elm_lang$core$Json_Decode_ops[':='], 'active', _elm_lang$core$Json_Decode$bool),
+									function (active) {
+										return A2(
+											_elm_lang$core$Json_Decode$andThen,
+											A2(_elm_lang$core$Json_Decode_ops[':='], 'tabID', _elm_lang$core$Json_Decode$int),
+											function (tabID) {
+												return A2(
+													_elm_lang$core$Json_Decode$andThen,
+													A2(_elm_lang$core$Json_Decode_ops[':='], 'saved', _elm_lang$core$Json_Decode$bool),
+													function (saved) {
+														return A2(
+															_elm_lang$core$Json_Decode$andThen,
+															A2(_elm_lang$core$Json_Decode_ops[':='], 'favIconUrl', _elm_lang$core$Json_Decode$string),
+															function (favIconUrl) {
+																return _elm_lang$core$Json_Decode$succeed(
+																	{url: url, title: title, index: index, active: active, tabID: tabID, saved: saved, favIconUrl: favIconUrl});
+															});
+													});
+											});
+									});
+							});
+					});
+			})));
+var _user$project$Spelling$TabsList = F7(
+	function (a, b, c, d, e, f, g) {
+		return {url: a, title: b, index: c, active: d, tabID: e, saved: f, favIconUrl: g};
 	});
-var _user$project$Spelling$Model = F4(
-	function (a, b, c, d) {
-		return {word: a, suggestions: b, tabs: c, tabIndex: d};
+var _user$project$Spelling$SavedTabsList = F8(
+	function (a, b, c, d, e, f, g, h) {
+		return {url: a, title: b, index: c, active: d, fireRef: e, tabID: f, saved: g, favIconUrl: h};
+	});
+var _user$project$Spelling$Model = F6(
+	function (a, b, c, d, e, f) {
+		return {word: a, suggestions: b, tabs: c, savedTabs: d, tabIndex: e, render: f};
 	});
 var _user$project$Spelling$init = {
 	ctor: '_Tuple2',
-	_0: A4(
+	_0: A6(
 		_user$project$Spelling$Model,
 		'',
 		_elm_lang$core$Native_List.fromArray(
 			[]),
 		_elm_lang$core$Native_List.fromArray(
 			[]),
-		0),
+		_elm_lang$core$Native_List.fromArray(
+			[]),
+		0,
+		true),
 	_1: _elm_lang$core$Platform_Cmd$none
 };
 var _user$project$Spelling$NoOp = {ctor: 'NoOp'};
@@ -8397,6 +8454,14 @@ var _user$project$Spelling$update = F2(
 						{tabs: _p0._0}),
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
+			case 'TabsSaved':
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{savedTabs: _p0._0}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
 			case 'Close':
 				return {
 					ctor: '_Tuple2',
@@ -8408,6 +8473,18 @@ var _user$project$Spelling$update = F2(
 					ctor: '_Tuple2',
 					_0: model,
 					_1: _user$project$Spelling$activate(_p0._0)
+				};
+			case 'Save':
+				return {
+					ctor: '_Tuple2',
+					_0: model,
+					_1: _user$project$Spelling$save(_p0._0)
+				};
+			case 'Delete':
+				return {
+					ctor: '_Tuple2',
+					_0: model,
+					_1: _user$project$Spelling$delete(_p0._0)
 				};
 			case 'CycleUp':
 				var cmd = A3(
@@ -8447,16 +8524,47 @@ var _user$project$Spelling$update = F2(
 						{tabIndex: model.tabIndex + 1}),
 					_1: cmd
 				};
-			case 'Save':
+			case 'Focus':
+				var cmd = A3(
+					_elm_lang$core$Task$perform,
+					function (error) {
+						return _user$project$Spelling$NoOp;
+					},
+					function (_p5) {
+						var _p6 = _p5;
+						return _user$project$Spelling$NoOp;
+					},
+					_elm_lang$dom$Dom$focus(
+						_elm_lang$core$Basics$toString(model.tabIndex)));
+				return {ctor: '_Tuple2', _0: model, _1: cmd};
+			case 'ShowCurrent':
 				return {
 					ctor: '_Tuple2',
-					_0: model,
-					_1: _user$project$Spelling$save(_p0._0)
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{render: true}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+			case 'ShowSaved':
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{render: false}),
+					_1: _elm_lang$core$Platform_Cmd$none
 				};
 			default:
 				return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
 		}
 	});
+var _user$project$Spelling$ShowSaved = {ctor: 'ShowSaved'};
+var _user$project$Spelling$ShowCurrent = {ctor: 'ShowCurrent'};
+var _user$project$Spelling$Focus = function (a) {
+	return {ctor: 'Focus', _0: a};
+};
+var _user$project$Spelling$Delete = function (a) {
+	return {ctor: 'Delete', _0: a};
+};
 var _user$project$Spelling$Save = function (a) {
 	return {ctor: 'Save', _0: a};
 };
@@ -8468,31 +8576,25 @@ var _user$project$Spelling$Activate = function (a) {
 var _user$project$Spelling$Close = function (a) {
 	return {ctor: 'Close', _0: a};
 };
-var _user$project$Spelling$onKeyboardEvent = function (tabID) {
+var _user$project$Spelling$onKeyboardEvent = function (tab) {
 	var tagger = function (code) {
-		return (_elm_lang$core$Native_Utils.eq(code, 13) || _elm_lang$core$Native_Utils.eq(code, 37)) ? _user$project$Spelling$Activate(tabID) : ((_elm_lang$core$Native_Utils.eq(code, 8) || _elm_lang$core$Native_Utils.eq(code, 39)) ? _user$project$Spelling$Close(tabID) : ((_elm_lang$core$Native_Utils.eq(code, 38) || _elm_lang$core$Native_Utils.eq(code, 9)) ? _user$project$Spelling$CycleUp : (_elm_lang$core$Native_Utils.eq(code, 40) ? _user$project$Spelling$CycleDown : _user$project$Spelling$NoOp)));
+		return (_elm_lang$core$Native_Utils.eq(code, 13) || _elm_lang$core$Native_Utils.eq(code, 37)) ? _user$project$Spelling$Activate(tab.tabID) : ((_elm_lang$core$Native_Utils.eq(code, 8) || _elm_lang$core$Native_Utils.eq(code, 39)) ? _user$project$Spelling$Close(tab.tabID) : ((_elm_lang$core$Native_Utils.eq(code, 38) || _elm_lang$core$Native_Utils.eq(code, 9)) ? _user$project$Spelling$CycleUp : (_elm_lang$core$Native_Utils.eq(code, 40) ? _user$project$Spelling$CycleDown : (_elm_lang$core$Native_Utils.eq(code, 9) ? _user$project$Spelling$Save(tab) : _user$project$Spelling$NoOp))));
 	};
 	return A2(
 		_elm_lang$html$Html_Events$on,
 		'keydown',
 		A2(_elm_lang$core$Json_Decode$map, tagger, _elm_lang$html$Html_Events$keyCode));
 };
-var _user$project$Spelling$toLi = function (tab) {
+var _user$project$Spelling$toSavedLi = function (tab) {
 	return A2(
 		_elm_lang$html$Html$div,
 		_elm_lang$core$Native_List.fromArray(
 			[
-				_elm_lang$html$Html_Events$onClick(
-				_user$project$Spelling$Activate(tab.tabID)),
-				_user$project$Spelling$onKeyboardEvent(tab.tabID),
+				_user$project$Spelling$onKeyboardEvent(tab),
 				_elm_lang$html$Html_Attributes$tabindex(1),
 				_elm_lang$html$Html_Attributes$autofocus(
 				_user$project$Spelling$isFirst(tab.index)),
-				_elm_lang$html$Html_Attributes$class(
-				A2(
-					_elm_lang$core$Basics_ops['++'],
-					' tabsli ',
-					tab.active ? 'active' : '')),
+				_elm_lang$html$Html_Attributes$class('tabsli hover-style focus-style'),
 				_elm_lang$html$Html_Attributes$id(
 				_elm_lang$core$Basics$toString(tab.index))
 			]),
@@ -8502,7 +8604,7 @@ var _user$project$Spelling$toLi = function (tab) {
 				_elm_lang$html$Html$li,
 				_elm_lang$core$Native_List.fromArray(
 					[
-						_elm_lang$html$Html_Attributes$class('list flex flex-row pa2 w-100 items-center')
+						_elm_lang$html$Html_Attributes$class('list flex flex-row pa3 w-100 items-center')
 					]),
 				_elm_lang$core$Native_List.fromArray(
 					[
@@ -8521,35 +8623,113 @@ var _user$project$Spelling$toLi = function (tab) {
 						_elm_lang$html$Html$div,
 						_elm_lang$core$Native_List.fromArray(
 							[
-								_elm_lang$html$Html_Attributes$class('w-60')
+								_elm_lang$html$Html_Attributes$class('w-60'),
+								_elm_lang$html$Html_Events$onClick(
+								_user$project$Spelling$Activate(tab.tabID))
 							]),
 						_elm_lang$core$Native_List.fromArray(
 							[
 								_elm_lang$html$Html$text(tab.title)
 							])),
 						A2(
-						_elm_lang$html$Html$div,
+						_elm_lang$html$Html$button,
 						_elm_lang$core$Native_List.fromArray(
 							[
-								_elm_lang$html$Html_Attributes$class('w-20 tc red'),
+								_elm_lang$html$Html_Attributes$class('w-40 tc red ms-pt btn hover-style'),
 								_elm_lang$html$Html_Events$onClick(
-								_user$project$Spelling$Close(tab.tabID))
+								_user$project$Spelling$Delete(tab)),
+								_elm_lang$html$Html_Attributes$tabindex(-1)
 							]),
 						_elm_lang$core$Native_List.fromArray(
 							[
 								_elm_lang$html$Html$text('X')
-							])),
+							]))
+					]))
+			]));
+};
+var _user$project$Spelling$savedTabsList = function (model) {
+	return A2(
+		_elm_lang$html$Html$ul,
+		_elm_lang$core$Native_List.fromArray(
+			[
+				_elm_lang$html$Html_Attributes$class('pa0 flex-column flex self-center w-100')
+			]),
+		A2(_elm_lang$core$List$map, _user$project$Spelling$toSavedLi, model.savedTabs));
+};
+var _user$project$Spelling$toLi = function (tab) {
+	return A2(
+		_elm_lang$html$Html$div,
+		_elm_lang$core$Native_List.fromArray(
+			[
+				_user$project$Spelling$onKeyboardEvent(tab),
+				_elm_lang$html$Html_Attributes$tabindex(1),
+				_elm_lang$html$Html_Attributes$autofocus(
+				_user$project$Spelling$isFirst(tab.index)),
+				_elm_lang$html$Html_Attributes$class(
+				A2(
+					_elm_lang$core$Basics_ops['++'],
+					'tabsli hover-style focus-style',
+					tab.active ? ' active' : '')),
+				_elm_lang$html$Html_Attributes$id(
+				_elm_lang$core$Basics$toString(tab.index))
+			]),
+		_elm_lang$core$Native_List.fromArray(
+			[
+				A2(
+				_elm_lang$html$Html$li,
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html_Attributes$class('list flex flex-row pa3 w-100 items-center')
+					]),
+				_elm_lang$core$Native_List.fromArray(
+					[
+						A2(
+						_elm_lang$html$Html$img,
+						_elm_lang$core$Native_List.fromArray(
+							[
+								_elm_lang$html$Html_Attributes$src(tab.favIconUrl),
+								_elm_lang$html$Html_Attributes$height(25),
+								_elm_lang$html$Html_Attributes$width(25),
+								_elm_lang$html$Html_Attributes$class('pl2 pr2')
+							]),
+						_elm_lang$core$Native_List.fromArray(
+							[])),
 						A2(
 						_elm_lang$html$Html$div,
 						_elm_lang$core$Native_List.fromArray(
 							[
-								_elm_lang$html$Html_Attributes$class('w-20'),
+								_elm_lang$html$Html_Attributes$class('w-60'),
+								_elm_lang$html$Html_Events$onClick(
+								_user$project$Spelling$Activate(tab.tabID))
+							]),
+						_elm_lang$core$Native_List.fromArray(
+							[
+								_elm_lang$html$Html$text(tab.title)
+							])),
+						A2(
+						_elm_lang$html$Html$p,
+						_elm_lang$core$Native_List.fromArray(
+							[
+								_elm_lang$html$Html_Attributes$class('w-20 ms-pt tc'),
 								_elm_lang$html$Html_Events$onClick(
 								_user$project$Spelling$Save(tab))
 							]),
 						_elm_lang$core$Native_List.fromArray(
 							[
 								_elm_lang$html$Html$text('save')
+							])),
+						A2(
+						_elm_lang$html$Html$button,
+						_elm_lang$core$Native_List.fromArray(
+							[
+								_elm_lang$html$Html_Attributes$class('w-10 tc red ms-pt btn hover-style'),
+								_elm_lang$html$Html_Events$onClick(
+								_user$project$Spelling$Close(tab.tabID)),
+								_elm_lang$html$Html_Attributes$tabindex(-1)
+							]),
+						_elm_lang$core$Native_List.fromArray(
+							[
+								_elm_lang$html$Html$text('X')
 							]))
 					]))
 			]));
@@ -8563,6 +8743,9 @@ var _user$project$Spelling$tabsList = function (model) {
 			]),
 		A2(_elm_lang$core$List$map, _user$project$Spelling$toLi, model.tabs));
 };
+var _user$project$Spelling$renderList = function (model) {
+	return _elm_lang$core$Native_Utils.eq(model.render, true) ? _user$project$Spelling$tabsList(model) : _user$project$Spelling$savedTabsList(model);
+};
 var _user$project$Spelling$view = function (model) {
 	return A2(
 		_elm_lang$html$Html$div,
@@ -8572,8 +8755,51 @@ var _user$project$Spelling$view = function (model) {
 			]),
 		_elm_lang$core$Native_List.fromArray(
 			[
-				_user$project$Spelling$tabsList(model)
+				A2(
+				_elm_lang$html$Html$div,
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html_Attributes$class('w-100 flex flex-row container self-center bg-lightest-blue')
+					]),
+				_elm_lang$core$Native_List.fromArray(
+					[
+						A2(
+						_elm_lang$html$Html$div,
+						_elm_lang$core$Native_List.fromArray(
+							[
+								_elm_lang$html$Html_Attributes$class('pa2 w-50 flex self-center justify-center bg-lightest-blue'),
+								_elm_lang$html$Html_Events$onClick(_user$project$Spelling$ShowCurrent)
+							]),
+						_elm_lang$core$Native_List.fromArray(
+							[
+								_elm_lang$html$Html$text('Current')
+							])),
+						A2(
+						_elm_lang$html$Html$div,
+						_elm_lang$core$Native_List.fromArray(
+							[
+								_elm_lang$html$Html_Attributes$class('pa2 w-50 flex self-center justify-center bg-lightest-blue'),
+								_elm_lang$html$Html_Events$onClick(_user$project$Spelling$ShowSaved)
+							]),
+						_elm_lang$core$Native_List.fromArray(
+							[
+								_elm_lang$html$Html$text('Saved')
+							]))
+					])),
+				A2(
+				_elm_lang$html$Html$div,
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html_Attributes$class('pa2 w-100 flex flex-column container bg-lightest-blue')
+					]),
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_user$project$Spelling$renderList(model)
+					]))
 			]));
+};
+var _user$project$Spelling$TabsSaved = function (a) {
+	return {ctor: 'TabsSaved', _0: a};
 };
 var _user$project$Spelling$Tabs = function (a) {
 	return {ctor: 'Tabs', _0: a};
@@ -8582,7 +8808,8 @@ var _user$project$Spelling$subscriptions = function (model) {
 	return _elm_lang$core$Platform_Sub$batch(
 		_elm_lang$core$Native_List.fromArray(
 			[
-				_user$project$Spelling$initialTabs(_user$project$Spelling$Tabs)
+				_user$project$Spelling$initialTabs(_user$project$Spelling$Tabs),
+				_user$project$Spelling$savedTabs(_user$project$Spelling$TabsSaved)
 			]));
 };
 var _user$project$Spelling$main = {

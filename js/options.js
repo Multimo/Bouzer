@@ -14,14 +14,31 @@ firebase.initializeApp(config);
 
 var db = firebase.database();
 var ref = db.ref("root/");
-var tabsRef = ref.child("tabs");
+var currentTabsRef = ref.child("currentTabs");
+var savedTabsRef = ref.child("savedTabs");
+
+
+
+
+//event listener that will update elm model upon change
+savedTabsRef.on("value", function(snapshot) {
+  var savedObj = snapshot.val();
+
+  var savedArr = [];
+  for (const key of Object.keys(savedObj)) {
+    const val = savedObj[key];
+    val.fireRef = key;
+    console.log(val);
+    savedArr.push(val)
+  }
+  app.ports.savedTabs.send(savedArr);
+}, function (errorObject) {
+  console.log("The read failed: " + errorObject.code);
+});
+
+
 
 function handleUpdated(tabId, changeInfo, tabInfo) {
-  // console.log("Updated tab: " + tabId);
-  // console.log("Changed attributes: ");
-  // console.log(changeInfo);
-  // console.log("New tab Info: ");
-  // console.log(tabInfo);
 
   chrome.tabs.query({
       currentWindow: true
@@ -36,8 +53,7 @@ chrome.tabs.onCreated.addListener(handleUpdated);
 
 app.ports.close.subscribe(function(tab) {
     // close tab here
-    // console.log(tab);
-    chrome.tabs.remove(tab, function() { });
+    chrome.tabs.remove(tab, function() {});
 
     // send back new state here
     chrome.tabs.query({
@@ -48,14 +64,13 @@ app.ports.close.subscribe(function(tab) {
 });
 
 app.ports.save.subscribe(function(tab) {
-    console.log(tab);
+    // console.log(tab);
     // send back new state here
-      tabsRef.set(tabsElm)
+    savedTabsRef.push(tab);
 });
 
 app.ports.activate.subscribe(function(tab) {
     // make tab active here
-    // console.log(tab);
     chrome.tabs.update(tab,  {selected: true} );
 
     // send back new state here
@@ -64,6 +79,16 @@ app.ports.activate.subscribe(function(tab) {
       }, function(data) {
         updateState(data);
       });
+});
+
+app.ports.delete.subscribe(function(tab) {
+    // close tab here
+    // console.log(tab);
+    console.log(savedTabsRef.orderByChild("url"));
+    // .equalTo(tab.url).remove(function(error){
+    //   console.log(error)
+    // });
+    // send back new state here
 });
 
 
@@ -79,18 +104,18 @@ chrome.tabs.query({
 function updateState(data) {
   var tabsElm = [];
   return data.map(function(tab){
-    // console.log(tab);
     tabz = {
       'url' : tab.url,
       'title' : tab.title,
       'index' : tab.index,
       'active': tab.active,
       'tabID' : tab.id,
+      'saved' : false,
       'favIconUrl' : tab.favIconUrl ? tab.favIconUrl : '../../icons/icon48.png'
     };
     tabsElm.push(tabz);
     return tabsElm;
   }),
-  tabsRef.set(tabsElm),
+  currentTabsRef.set(tabsElm),
   app.ports.initialTabs.send(tabsElm);
 }

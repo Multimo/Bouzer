@@ -1,9 +1,15 @@
-.tabsli:focus {
+.focus-style:focus {
   /*background: #3391cc;*/
   opacity: 1;
   background-color: rgb(255, 184, 140);
   background-image: linear-gradient(to left, rgb(222, 98, 98), rgb(255, 184, 140));
   box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+}
+.hover-style:hover {
+  background-color: rgb(255, 184, 140);
+  background-image: linear-gradient(to left, rgb(222, 98, 98), rgb(255, 184, 140));
+  box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+  color: #ffffff;
 }
 
 .tabsli {
@@ -11,6 +17,7 @@
   outline: none;
   color: #ffffff;
   font-family: 'Raleway', sans-serif;
+  box-shadow: 0 0px 0px rgba(0,0,0,0.16), 0 0px 0px rgba(0,0,0,0.23);
 }
 body {
 overflow-x: hidden;
@@ -25,4 +32,16 @@ background-color: #FFCCCC;
 .active {
   background-color: rgb(60, 211, 173);
   background-image: linear-gradient(to left, rgb(76, 184, 196), rgb(60, 211, 173));
+}
+
+.ms-pt {
+  cursor: pointer;
+}
+
+.btn {
+  background: #fff;
+  border: none;
+  padding: 5px;
+  border-radius: 3px;
+  transition: all .3s;
 }
