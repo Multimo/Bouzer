@@ -8332,7 +8332,7 @@ var _user$project$Spelling$activate = _elm_lang$core$Native_Platform.outgoingPor
 var _user$project$Spelling$delete = _elm_lang$core$Native_Platform.outgoingPort(
 	'delete',
 	function (v) {
-		return {url: v.url, title: v.title, index: v.index, active: v.active, tabID: v.tabID, saved: v.saved, favIconUrl: v.favIconUrl};
+		return v;
 	});
 var _user$project$Spelling$initialTabs = _elm_lang$core$Native_Platform.incomingPort(
 	'initialTabs',
@@ -8379,34 +8379,34 @@ var _user$project$Spelling$savedTabs = _elm_lang$core$Native_Platform.incomingPo
 	_elm_lang$core$Json_Decode$list(
 		A2(
 			_elm_lang$core$Json_Decode$andThen,
-			A2(_elm_lang$core$Json_Decode_ops[':='], 'url', _elm_lang$core$Json_Decode$string),
-			function (url) {
+			A2(_elm_lang$core$Json_Decode_ops[':='], 'active', _elm_lang$core$Json_Decode$bool),
+			function (active) {
 				return A2(
 					_elm_lang$core$Json_Decode$andThen,
-					A2(_elm_lang$core$Json_Decode_ops[':='], 'title', _elm_lang$core$Json_Decode$string),
-					function (title) {
+					A2(_elm_lang$core$Json_Decode_ops[':='], 'favIconUrl', _elm_lang$core$Json_Decode$string),
+					function (favIconUrl) {
 						return A2(
 							_elm_lang$core$Json_Decode$andThen,
 							A2(_elm_lang$core$Json_Decode_ops[':='], 'index', _elm_lang$core$Json_Decode$int),
 							function (index) {
 								return A2(
 									_elm_lang$core$Json_Decode$andThen,
-									A2(_elm_lang$core$Json_Decode_ops[':='], 'active', _elm_lang$core$Json_Decode$bool),
-									function (active) {
+									A2(_elm_lang$core$Json_Decode_ops[':='], 'saved', _elm_lang$core$Json_Decode$bool),
+									function (saved) {
 										return A2(
 											_elm_lang$core$Json_Decode$andThen,
 											A2(_elm_lang$core$Json_Decode_ops[':='], 'tabID', _elm_lang$core$Json_Decode$int),
 											function (tabID) {
 												return A2(
 													_elm_lang$core$Json_Decode$andThen,
-													A2(_elm_lang$core$Json_Decode_ops[':='], 'saved', _elm_lang$core$Json_Decode$bool),
-													function (saved) {
+													A2(_elm_lang$core$Json_Decode_ops[':='], 'title', _elm_lang$core$Json_Decode$string),
+													function (title) {
 														return A2(
 															_elm_lang$core$Json_Decode$andThen,
-															A2(_elm_lang$core$Json_Decode_ops[':='], 'favIconUrl', _elm_lang$core$Json_Decode$string),
-															function (favIconUrl) {
+															A2(_elm_lang$core$Json_Decode_ops[':='], 'url', _elm_lang$core$Json_Decode$string),
+															function (url) {
 																return _elm_lang$core$Json_Decode$succeed(
-																	{url: url, title: title, index: index, active: active, tabID: tabID, saved: saved, favIconUrl: favIconUrl});
+																	{active: active, favIconUrl: favIconUrl, index: index, saved: saved, tabID: tabID, title: title, url: url});
 															});
 													});
 											});
@@ -8418,21 +8418,18 @@ var _user$project$Spelling$TabsList = F7(
 	function (a, b, c, d, e, f, g) {
 		return {url: a, title: b, index: c, active: d, tabID: e, saved: f, favIconUrl: g};
 	});
-var _user$project$Spelling$SavedTabsList = F8(
-	function (a, b, c, d, e, f, g, h) {
-		return {url: a, title: b, index: c, active: d, fireRef: e, tabID: f, saved: g, favIconUrl: h};
+var _user$project$Spelling$SavedList = F7(
+	function (a, b, c, d, e, f, g) {
+		return {active: a, favIconUrl: b, index: c, saved: d, tabID: e, title: f, url: g};
 	});
-var _user$project$Spelling$Model = F6(
-	function (a, b, c, d, e, f) {
-		return {word: a, suggestions: b, tabs: c, savedTabs: d, tabIndex: e, render: f};
+var _user$project$Spelling$Model = F4(
+	function (a, b, c, d) {
+		return {tabs: a, savedTabs: b, tabIndex: c, render: d};
 	});
 var _user$project$Spelling$init = {
 	ctor: '_Tuple2',
-	_0: A6(
+	_0: A4(
 		_user$project$Spelling$Model,
-		'',
-		_elm_lang$core$Native_List.fromArray(
-			[]),
 		_elm_lang$core$Native_List.fromArray(
 			[]),
 		_elm_lang$core$Native_List.fromArray(
@@ -8585,18 +8582,18 @@ var _user$project$Spelling$onKeyboardEvent = function (tab) {
 		'keydown',
 		A2(_elm_lang$core$Json_Decode$map, tagger, _elm_lang$html$Html_Events$keyCode));
 };
-var _user$project$Spelling$toSavedLi = function (tab) {
+var _user$project$Spelling$toSavedLi = function (saved) {
 	return A2(
 		_elm_lang$html$Html$div,
 		_elm_lang$core$Native_List.fromArray(
 			[
-				_user$project$Spelling$onKeyboardEvent(tab),
+				_user$project$Spelling$onKeyboardEvent(saved),
 				_elm_lang$html$Html_Attributes$tabindex(1),
 				_elm_lang$html$Html_Attributes$autofocus(
-				_user$project$Spelling$isFirst(tab.index)),
+				_user$project$Spelling$isFirst(saved.index)),
 				_elm_lang$html$Html_Attributes$class('tabsli hover-style focus-style'),
 				_elm_lang$html$Html_Attributes$id(
-				_elm_lang$core$Basics$toString(tab.index))
+				_elm_lang$core$Basics$toString(saved.index))
 			]),
 		_elm_lang$core$Native_List.fromArray(
 			[
@@ -8612,7 +8609,7 @@ var _user$project$Spelling$toSavedLi = function (tab) {
 						_elm_lang$html$Html$img,
 						_elm_lang$core$Native_List.fromArray(
 							[
-								_elm_lang$html$Html_Attributes$src(tab.favIconUrl),
+								_elm_lang$html$Html_Attributes$src(saved.favIconUrl),
 								_elm_lang$html$Html_Attributes$height(25),
 								_elm_lang$html$Html_Attributes$width(25),
 								_elm_lang$html$Html_Attributes$class('pl2 pr2')
@@ -8625,11 +8622,11 @@ var _user$project$Spelling$toSavedLi = function (tab) {
 							[
 								_elm_lang$html$Html_Attributes$class('w-60'),
 								_elm_lang$html$Html_Events$onClick(
-								_user$project$Spelling$Activate(tab.tabID))
+								_user$project$Spelling$Activate(saved.tabID))
 							]),
 						_elm_lang$core$Native_List.fromArray(
 							[
-								_elm_lang$html$Html$text(tab.title)
+								_elm_lang$html$Html$text(saved.title)
 							])),
 						A2(
 						_elm_lang$html$Html$button,
@@ -8637,7 +8634,7 @@ var _user$project$Spelling$toSavedLi = function (tab) {
 							[
 								_elm_lang$html$Html_Attributes$class('w-40 tc red ms-pt btn hover-style'),
 								_elm_lang$html$Html_Events$onClick(
-								_user$project$Spelling$Delete(tab)),
+								_user$project$Spelling$Delete(saved.title)),
 								_elm_lang$html$Html_Attributes$tabindex(-1)
 							]),
 						_elm_lang$core$Native_List.fromArray(
@@ -8647,14 +8644,14 @@ var _user$project$Spelling$toSavedLi = function (tab) {
 					]))
 			]));
 };
-var _user$project$Spelling$savedTabsList = function (model) {
+var _user$project$Spelling$savedTabsList = function (savedTabs) {
 	return A2(
 		_elm_lang$html$Html$ul,
 		_elm_lang$core$Native_List.fromArray(
 			[
 				_elm_lang$html$Html_Attributes$class('pa0 flex-column flex self-center w-100')
 			]),
-		A2(_elm_lang$core$List$map, _user$project$Spelling$toSavedLi, model.savedTabs));
+		A2(_elm_lang$core$List$map, _user$project$Spelling$toSavedLi, savedTabs));
 };
 var _user$project$Spelling$toLi = function (tab) {
 	return A2(
@@ -8734,17 +8731,17 @@ var _user$project$Spelling$toLi = function (tab) {
 					]))
 			]));
 };
-var _user$project$Spelling$tabsList = function (model) {
+var _user$project$Spelling$tabsList = function (tabs) {
 	return A2(
 		_elm_lang$html$Html$ul,
 		_elm_lang$core$Native_List.fromArray(
 			[
 				_elm_lang$html$Html_Attributes$class('pa0 flex-column flex self-center w-100')
 			]),
-		A2(_elm_lang$core$List$map, _user$project$Spelling$toLi, model.tabs));
+		A2(_elm_lang$core$List$map, _user$project$Spelling$toLi, tabs));
 };
 var _user$project$Spelling$renderList = function (model) {
-	return _elm_lang$core$Native_Utils.eq(model.render, true) ? _user$project$Spelling$tabsList(model) : _user$project$Spelling$savedTabsList(model);
+	return _elm_lang$core$Native_Utils.eq(model.render, true) ? _user$project$Spelling$tabsList(model.tabs) : _user$project$Spelling$savedTabsList(model.savedTabs);
 };
 var _user$project$Spelling$view = function (model) {
 	return A2(
@@ -8795,6 +8792,15 @@ var _user$project$Spelling$view = function (model) {
 				_elm_lang$core$Native_List.fromArray(
 					[
 						_user$project$Spelling$renderList(model)
+					])),
+				A2(
+				_elm_lang$html$Html$div,
+				_elm_lang$core$Native_List.fromArray(
+					[]),
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html$text(
+						_elm_lang$core$Basics$toString(model))
 					]))
 			]));
 };

@@ -1,9 +1,9 @@
 
 //intital Elm app
-var app = Elm.Spelling.fullscreen();
+const app = Elm.Spelling.fullscreen();
 
 //start firebase and stuff
-var config = {
+const config = {
   apiKey: "AIzaSyAx8DzcZ8tkfQbW-J5JNHEnC56nkH2BBAQ",
   authDomain: "bouzer-8e042.firebaseapp.com",
   databaseURL: "https://bouzer-8e042.firebaseio.com",
@@ -12,25 +12,26 @@ var config = {
 };
 firebase.initializeApp(config);
 
-var db = firebase.database();
-var ref = db.ref("root/");
-var currentTabsRef = ref.child("currentTabs");
-var savedTabsRef = ref.child("savedTabs");
+const db = firebase.database();
+const ref = db.ref("root/");
+const currentTabsRef = ref.child("currentTabs");
+const savedTabsRef = ref.child("savedTabs");
 
 
 
 
 //event listener that will update elm model upon change
 savedTabsRef.on("value", function(snapshot) {
-  var savedObj = snapshot.val();
+  const savedObj = snapshot.val();
 
-  var savedArr = [];
-  for (const key of Object.keys(savedObj)) {
+  const savedArr = [];
+  for (let key of Object.keys(savedObj)) {
     const val = savedObj[key];
     val.fireRef = key;
-    console.log(val);
+    // console.log(val);
     savedArr.push(val)
   }
+  console.log(savedArr)
   app.ports.savedTabs.send(savedArr);
 }, function (errorObject) {
   console.log("The read failed: " + errorObject.code);
@@ -83,7 +84,8 @@ app.ports.activate.subscribe(function(tab) {
 
 app.ports.delete.subscribe(function(tab) {
     // close tab here
-    // console.log(tab);
+    console.log(tab);
+
     console.log(savedTabsRef.orderByChild("url"));
     // .equalTo(tab.url).remove(function(error){
     //   console.log(error)
@@ -102,7 +104,7 @@ chrome.tabs.query({
 
 // main update function which sends data to elm and firebase
 function updateState(data) {
-  var tabsElm = [];
+  const tabsElm = [];
   return data.map(function(tab){
     tabz = {
       'url' : tab.url,

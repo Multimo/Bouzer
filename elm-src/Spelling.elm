@@ -74,21 +74,19 @@ type alias TabsList =
   }
 
 type alias SavedList =
-  { url : String
-  , title : String
-  , index : Int
-  , active : Bool
-  , fireRef: String
-  , tabID : Int
-  , saved : Bool
+  { active : Bool
   , favIconUrl : String
+  , fireRef : String
+  , index : Int
+  , saved : Bool
+  , tabID : Int
+  , title : String
+  , url : String
   }
 
 
 type alias Model =
-  { word : String
-  , suggestions : List String
-  , tabs : List TabsList
+  { tabs : List TabsList
   , savedTabs : List SavedList
   , tabIndex : Int
   , render: Bool
@@ -96,7 +94,7 @@ type alias Model =
 
 init : (Model, Cmd msg)
 init =
-  (Model "" [] [] [] 0 True, Cmd.none )
+  (Model [] [] 0 True, Cmd.none )
 
 
 -- UPDATE
@@ -138,8 +136,8 @@ update msg model =
     Save tab ->
       ( model , save tab )
 
-    Delete ref ->
-      ( model , delete ref )
+    Delete val ->
+      ( model , delete val )
 
     CycleUp ->
       let
@@ -179,7 +177,6 @@ update msg model =
 
 -- SUBSCRIPTIONS
 
--- port suggestions : (List String -> msg) -> Sub msg
 port initialTabs : ( List TabsList -> msg ) -> Sub msg
 port savedTabs : ( List SavedList -> msg ) -> Sub msg
 
@@ -203,7 +200,7 @@ isFirst index =
 
 renderList: Model -> Html Msg
 renderList model =
-  ( if model.render == True then tabsList model else savedTabsList model )
+  ( if model.render == True then tabsList model.tabs else savedTabsList model.savedTabs )
 
 view : Model -> Html Msg
 view model =
@@ -213,6 +210,7 @@ view model =
       , div [ class "pa2 w-50 flex self-center justify-center bg-lightest-blue", onClick ShowSaved ]  [ text "Saved" ]
     ]
   , div [ class "pa2 w-100 flex flex-column container bg-lightest-blue" ]  [ renderList model ]
+  , div [] [ text ( toString model ) ]
   ]
 
 
@@ -221,10 +219,10 @@ view model =
 
 -- Active tabs view below
 
-tabsList : Model -> Html Msg
-tabsList model =
+tabsList : List TabsList -> Html Msg
+tabsList tabs =
     ul [ class "pa0 flex-column flex self-center w-100" ]
-    ( List.map toLi model.tabs )
+    ( List.map toLi tabs )
 
 
 toLi : TabsList -> Html Msg
@@ -244,22 +242,22 @@ toLi tab =
 
 -- Saved view below
 
-savedTabsList : Model -> Html Msg
-savedTabsList model =
+savedTabsList : List SavedList -> Html Msg
+savedTabsList savedTabs =
     ul [ class "pa0 flex-column flex self-center w-100" ]
-    ( List.map toSavedLi model.savedTabs )
+    ( List.map toSavedLi savedTabs )
 
 
-toSavedLi : SavedList -> Html Msg
-toSavedLi stab =
-    div [ onKeyboardEvent stab
+toSavedLi : TabsList -> Html Msg
+toSavedLi saved =
+    div [ onKeyboardEvent saved
     , tabindex 1
-    , autofocus (isFirst stab.index)
+    , autofocus (isFirst saved.index)
     , class ( "tabsli hover-style focus-style" )
-    , id ( toString stab.index )  ] [
+    , id ( toString saved.index )  ] [
     li [ class "list flex flex-row pa3 w-100 items-center"]
-    [ img [ src stab.favIconUrl, height 25, width 25, class "pl2 pr2" ] [ ]
-    , div [ class "w-60", onClick ( Activate stab.tabID ) ] [ text stab.title ]
-    , button [ class "w-40 tc red ms-pt btn hover-style", onClick ( Delete "hi" ), tabindex -1 ] [ text  "X" ]
+    [ img [ src saved.favIconUrl, height 25, width 25, class "pl2 pr2" ] [ ]
+    , div [ class "w-60", onClick ( Activate saved.tabID ) ] [ text saved.title ]
+    , button [ class "w-40 tc red ms-pt btn hover-style", onClick ( Delete saved.title ), tabindex -1 ] [ text  "X" ]
     ]
   ]
