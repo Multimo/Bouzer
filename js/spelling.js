@@ -8334,6 +8334,11 @@ var _user$project$Spelling$delete = _elm_lang$core$Native_Platform.outgoingPort(
 	function (v) {
 		return v;
 	});
+var _user$project$Spelling$open = _elm_lang$core$Native_Platform.outgoingPort(
+	'open',
+	function (v) {
+		return v;
+	});
 var _user$project$Spelling$initialTabs = _elm_lang$core$Native_Platform.incomingPort(
 	'initialTabs',
 	_elm_lang$core$Json_Decode$list(
@@ -8483,6 +8488,12 @@ var _user$project$Spelling$update = F2(
 					_0: model,
 					_1: _user$project$Spelling$delete(_p0._0)
 				};
+			case 'Open':
+				return {
+					ctor: '_Tuple2',
+					_0: model,
+					_1: _user$project$Spelling$open(_p0._0)
+				};
 			case 'CycleUp':
 				var cmd = A3(
 					_elm_lang$core$Task$perform,
@@ -8559,6 +8570,9 @@ var _user$project$Spelling$ShowCurrent = {ctor: 'ShowCurrent'};
 var _user$project$Spelling$Focus = function (a) {
 	return {ctor: 'Focus', _0: a};
 };
+var _user$project$Spelling$Open = function (a) {
+	return {ctor: 'Open', _0: a};
+};
 var _user$project$Spelling$Delete = function (a) {
 	return {ctor: 'Delete', _0: a};
 };
@@ -8622,7 +8636,7 @@ var _user$project$Spelling$toSavedLi = function (saved) {
 							[
 								_elm_lang$html$Html_Attributes$class('w-60'),
 								_elm_lang$html$Html_Events$onClick(
-								_user$project$Spelling$Activate(saved.tabID))
+								_user$project$Spelling$Open(saved.url))
 							]),
 						_elm_lang$core$Native_List.fromArray(
 							[

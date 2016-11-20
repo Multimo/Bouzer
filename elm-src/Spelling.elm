@@ -76,7 +76,6 @@ type alias TabsList =
 type alias SavedList =
   { active : Bool
   , favIconUrl : String
-  , fireRef : String
   , index : Int
   , saved : Bool
   , tabID : Int
@@ -108,6 +107,7 @@ type Msg
   | CycleDown
   | Save TabsList
   | Delete String
+  | Open String
   | Focus Int
   | ShowCurrent
   | ShowSaved
@@ -117,6 +117,7 @@ port close : Int -> Cmd msg
 port save : TabsList -> Cmd msg
 port activate : Int -> Cmd msg
 port delete : String -> Cmd msg
+port open : String -> Cmd msg
 
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
@@ -138,6 +139,9 @@ update msg model =
 
     Delete val ->
       ( model , delete val )
+
+    Open val ->
+      ( model , open val )
 
     CycleUp ->
       let
@@ -257,7 +261,7 @@ toSavedLi saved =
     , id ( toString saved.index )  ] [
     li [ class "list flex flex-row pa3 w-100 items-center"]
     [ img [ src saved.favIconUrl, height 25, width 25, class "pl2 pr2" ] [ ]
-    , div [ class "w-60", onClick ( Activate saved.tabID ) ] [ text saved.title ]
+    , div [ class "w-60", onClick ( Open saved.url ) ] [ text saved.title ]
     , button [ class "w-40 tc red ms-pt btn hover-style", onClick ( Delete saved.title ), tabindex -1 ] [ text  "X" ]
     ]
   ]

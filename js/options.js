@@ -93,6 +93,13 @@ app.ports.delete.subscribe(function(tab) {
     // send back new state here
 });
 
+// Port opens saved tabs on click
+app.ports.open.subscribe(function(url) {
+    chrome.tabs.create({ url: url }, function (data) {
+        updateState(data);
+    });
+});
+
 
 //Send query and to chrome, ask for tabs and send it to elm
 chrome.tabs.query({
