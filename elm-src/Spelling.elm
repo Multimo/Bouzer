@@ -15,11 +15,11 @@ import Task exposing (..)
 import Html.Events exposing (..)
 import Json.Decode exposing (..)
 
--- TODO: SETUP saved tabs read from firebase.
+-- TODO: SETUP saved tabs read from firebase. DONE
 -- TODO: update currentTabs on saved click
 -- TODO: autofocus on load tabindex 0? SORT OF DONE?
 -- TODO: create view for saved data in saved tabs DONE
--- TODO: delete saved tabs on click
+-- TODO: delete saved tabs on click DONE
 
 
 onKeyboardEvent: TabsList -> Attribute Msg
@@ -41,14 +41,6 @@ onKeyboardEvent tab =
     in
         on "keydown" (Json.Decode.map tagger keyCode)
 
-
--- focusCmd : ListTab String -> Cmd Msg
--- focusCmd tabindex direction =
---   let
---         focus ( toString ( Model.tabIndex ) )
---             |> Task.perform (\error -> NoOp ) (\() -> NoOp)
---
---   in
 
 
 main : Program Never
@@ -73,20 +65,9 @@ type alias TabsList =
   , favIconUrl : String
   }
 
-type alias SavedList =
-  { active : Bool
-  , favIconUrl : String
-  , index : Int
-  , saved : Bool
-  , tabID : Int
-  , title : String
-  , url : String
-  }
-
-
 type alias Model =
   { tabs : List TabsList
-  , savedTabs : List SavedList
+  , savedTabs : List TabsList
   , tabIndex : Int
   , render: Bool
   }
@@ -100,7 +81,7 @@ init =
 
 type Msg
   = Tabs (List TabsList)
-  | TabsSaved (List SavedList)
+  | TabsSaved (List TabsList)
   | Close Int
   | Activate Int
   | CycleUp
@@ -135,7 +116,14 @@ update msg model =
       ( model, activate tabId )
 
     Save tab ->
-      ( model , save tab )
+      ( List.map (setTitleAtID title postID) model.posts , Effects.none )
+
+      setTitleAtID title postID post =
+        if post.id == postID then
+          { post | title = title }
+        else
+          post
+      ({ model | tabs = { savedTab | saved = True }}, save tab )
 
     Delete val ->
       ( model , delete val )
@@ -182,7 +170,7 @@ update msg model =
 -- SUBSCRIPTIONS
 
 port initialTabs : ( List TabsList -> msg ) -> Sub msg
-port savedTabs : ( List SavedList -> msg ) -> Sub msg
+port savedTabs : ( List TabsList -> msg ) -> Sub msg
 
 
 subscriptions : Model -> Sub Msg
@@ -210,16 +198,13 @@ view : Model -> Html Msg
 view model =
   div [ class "pa2 w-100 flex flex-column container bg-lightest-blue"]
   [ div [ class "w-100 flex flex-row container self-center bg-lightest-blue" ]  [
-        div [ class "pa2 w-50 flex self-center justify-center bg-lightest-blue", onClick ShowCurrent ]  [ text "Current" ]
-      , div [ class "pa2 w-50 flex self-center justify-center bg-lightest-blue", onClick ShowSaved ]  [ text "Saved" ]
+        div [ class ( "render-tabs pa2 w-50 flex justify-center" ++ ( if model.render then " active" else "" ))
+        , onClick ShowCurrent ]  [ text "Current" ]
+      , div [ class ( "render-tabs pa2 w-50 flex justify-center" ++ ( if model.render == False then " active" else "" ))
+      , onClick ShowSaved ]  [ text "Saved" ]
     ]
   , div [ class "pa2 w-100 flex flex-column container bg-lightest-blue" ]  [ renderList model ]
-  , div [] [ text ( toString model ) ]
   ]
-
-
-    --input [ class "w-60 self-center ma1 br3", tabindex -1 ] []
-    -- , button [ class "w-40 self-center ma1 br3", tabindex -1 ] [ text "Check" ]
 
 -- Active tabs view below
 
@@ -246,7 +231,7 @@ toLi tab =
 
 -- Saved view below
 
-savedTabsList : List SavedList -> Html Msg
+savedTabsList : List TabsList -> Html Msg
 savedTabsList savedTabs =
     ul [ class "pa0 flex-column flex self-center w-100" ]
     ( List.map toSavedLi savedTabs )
@@ -261,7 +246,7 @@ toSavedLi saved =
     , id ( toString saved.index )  ] [
     li [ class "list flex flex-row pa3 w-100 items-center"]
     [ img [ src saved.favIconUrl, height 25, width 25, class "pl2 pr2" ] [ ]
-    , div [ class "w-60", onClick ( Open saved.url ) ] [ text saved.title ]
-    , button [ class "w-40 tc red ms-pt btn hover-style", onClick ( Delete saved.title ), tabindex -1 ] [ text  "X" ]
+    , div [ class "w-80", onClick ( Open saved.url ) ] [ text saved.title ]
+    , button [ class "w-20 tc red ms-pt btn hover-style", onClick ( Delete saved.url ), tabindex -1 ] [ text  "X" ]
     ]
   ]

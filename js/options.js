@@ -64,17 +64,16 @@ app.ports.close.subscribe(function(tab) {
       });
 });
 
+// Save to firebase
 app.ports.save.subscribe(function(tab) {
-    // console.log(tab);
-    // send back new state here
     savedTabsRef.push(tab);
 });
 
 app.ports.activate.subscribe(function(tab) {
-    // make tab active here
+    // makes tab active here
     chrome.tabs.update(tab,  {selected: true} );
 
-    // send back new state here
+    // sends back new state here
     chrome.tabs.query({
         currentWindow: true
       }, function(data) {
@@ -82,15 +81,16 @@ app.ports.activate.subscribe(function(tab) {
       });
 });
 
-app.ports.delete.subscribe(function(tab) {
-    // close tab here
-    console.log(tab);
-
-    console.log(savedTabsRef.orderByChild("url"));
-    // .equalTo(tab.url).remove(function(error){
-    //   console.log(error)
-    // });
-    // send back new state here
+// removes tab from saved list
+app.ports.delete.subscribe(function(url) {
+    savedTabsRef.orderByChild('url').equalTo(url).on('child_added', function(snapshot) {
+        console.log(snapshot.key + " was " + snapshot.val().url + " meters tall");
+        savedTabsRef.child(snapshot.key).remove().then(function(){
+            console.log("Remove succeeded.")
+          }).catch(function(error) {
+            console.log("Remove failed: " + error.message)
+          })
+    });
 });
 
 // Port opens saved tabs on click

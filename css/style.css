@@ -45,3 +45,8 @@ background-color: #FFCCCC;
   border-radius: 3px;
   transition: all .3s;
 }
+
+.render-tabs {
+  color: #fff;
+  transition: all .3s;
+}

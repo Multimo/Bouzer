@@ -8384,34 +8384,34 @@ var _user$project$Spelling$savedTabs = _elm_lang$core$Native_Platform.incomingPo
 	_elm_lang$core$Json_Decode$list(
 		A2(
 			_elm_lang$core$Json_Decode$andThen,
-			A2(_elm_lang$core$Json_Decode_ops[':='], 'active', _elm_lang$core$Json_Decode$bool),
-			function (active) {
+			A2(_elm_lang$core$Json_Decode_ops[':='], 'url', _elm_lang$core$Json_Decode$string),
+			function (url) {
 				return A2(
 					_elm_lang$core$Json_Decode$andThen,
-					A2(_elm_lang$core$Json_Decode_ops[':='], 'favIconUrl', _elm_lang$core$Json_Decode$string),
-					function (favIconUrl) {
+					A2(_elm_lang$core$Json_Decode_ops[':='], 'title', _elm_lang$core$Json_Decode$string),
+					function (title) {
 						return A2(
 							_elm_lang$core$Json_Decode$andThen,
 							A2(_elm_lang$core$Json_Decode_ops[':='], 'index', _elm_lang$core$Json_Decode$int),
 							function (index) {
 								return A2(
 									_elm_lang$core$Json_Decode$andThen,
-									A2(_elm_lang$core$Json_Decode_ops[':='], 'saved', _elm_lang$core$Json_Decode$bool),
-									function (saved) {
+									A2(_elm_lang$core$Json_Decode_ops[':='], 'active', _elm_lang$core$Json_Decode$bool),
+									function (active) {
 										return A2(
 											_elm_lang$core$Json_Decode$andThen,
 											A2(_elm_lang$core$Json_Decode_ops[':='], 'tabID', _elm_lang$core$Json_Decode$int),
 											function (tabID) {
 												return A2(
 													_elm_lang$core$Json_Decode$andThen,
-													A2(_elm_lang$core$Json_Decode_ops[':='], 'title', _elm_lang$core$Json_Decode$string),
-													function (title) {
+													A2(_elm_lang$core$Json_Decode_ops[':='], 'saved', _elm_lang$core$Json_Decode$bool),
+													function (saved) {
 														return A2(
 															_elm_lang$core$Json_Decode$andThen,
-															A2(_elm_lang$core$Json_Decode_ops[':='], 'url', _elm_lang$core$Json_Decode$string),
-															function (url) {
+															A2(_elm_lang$core$Json_Decode_ops[':='], 'favIconUrl', _elm_lang$core$Json_Decode$string),
+															function (favIconUrl) {
 																return _elm_lang$core$Json_Decode$succeed(
-																	{active: active, favIconUrl: favIconUrl, index: index, saved: saved, tabID: tabID, title: title, url: url});
+																	{url: url, title: title, index: index, active: active, tabID: tabID, saved: saved, favIconUrl: favIconUrl});
 															});
 													});
 											});
@@ -8422,10 +8422,6 @@ var _user$project$Spelling$savedTabs = _elm_lang$core$Native_Platform.incomingPo
 var _user$project$Spelling$TabsList = F7(
 	function (a, b, c, d, e, f, g) {
 		return {url: a, title: b, index: c, active: d, tabID: e, saved: f, favIconUrl: g};
-	});
-var _user$project$Spelling$SavedList = F7(
-	function (a, b, c, d, e, f, g) {
-		return {active: a, favIconUrl: b, index: c, saved: d, tabID: e, title: f, url: g};
 	});
 var _user$project$Spelling$Model = F4(
 	function (a, b, c, d) {
@@ -8634,7 +8630,7 @@ var _user$project$Spelling$toSavedLi = function (saved) {
 						_elm_lang$html$Html$div,
 						_elm_lang$core$Native_List.fromArray(
 							[
-								_elm_lang$html$Html_Attributes$class('w-60'),
+								_elm_lang$html$Html_Attributes$class('w-80'),
 								_elm_lang$html$Html_Events$onClick(
 								_user$project$Spelling$Open(saved.url))
 							]),
@@ -8646,9 +8642,9 @@ var _user$project$Spelling$toSavedLi = function (saved) {
 						_elm_lang$html$Html$button,
 						_elm_lang$core$Native_List.fromArray(
 							[
-								_elm_lang$html$Html_Attributes$class('w-40 tc red ms-pt btn hover-style'),
+								_elm_lang$html$Html_Attributes$class('w-20 tc red ms-pt btn hover-style'),
 								_elm_lang$html$Html_Events$onClick(
-								_user$project$Spelling$Delete(saved.title)),
+								_user$project$Spelling$Delete(saved.url)),
 								_elm_lang$html$Html_Attributes$tabindex(-1)
 							]),
 						_elm_lang$core$Native_List.fromArray(
@@ -8778,7 +8774,11 @@ var _user$project$Spelling$view = function (model) {
 						_elm_lang$html$Html$div,
 						_elm_lang$core$Native_List.fromArray(
 							[
-								_elm_lang$html$Html_Attributes$class('pa2 w-50 flex self-center justify-center bg-lightest-blue'),
+								_elm_lang$html$Html_Attributes$class(
+								A2(
+									_elm_lang$core$Basics_ops['++'],
+									'render-tabs pa2 w-50 flex justify-center',
+									model.render ? ' active' : '')),
 								_elm_lang$html$Html_Events$onClick(_user$project$Spelling$ShowCurrent)
 							]),
 						_elm_lang$core$Native_List.fromArray(
@@ -8789,7 +8789,11 @@ var _user$project$Spelling$view = function (model) {
 						_elm_lang$html$Html$div,
 						_elm_lang$core$Native_List.fromArray(
 							[
-								_elm_lang$html$Html_Attributes$class('pa2 w-50 flex self-center justify-center bg-lightest-blue'),
+								_elm_lang$html$Html_Attributes$class(
+								A2(
+									_elm_lang$core$Basics_ops['++'],
+									'render-tabs pa2 w-50 flex justify-center',
+									_elm_lang$core$Native_Utils.eq(model.render, false) ? ' active' : '')),
 								_elm_lang$html$Html_Events$onClick(_user$project$Spelling$ShowSaved)
 							]),
 						_elm_lang$core$Native_List.fromArray(
@@ -8806,15 +8810,6 @@ var _user$project$Spelling$view = function (model) {
 				_elm_lang$core$Native_List.fromArray(
 					[
 						_user$project$Spelling$renderList(model)
-					])),
-				A2(
-				_elm_lang$html$Html$div,
-				_elm_lang$core$Native_List.fromArray(
-					[]),
-				_elm_lang$core$Native_List.fromArray(
-					[
-						_elm_lang$html$Html$text(
-						_elm_lang$core$Basics$toString(model))
 					]))
 			]));
 };
