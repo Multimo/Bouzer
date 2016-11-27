@@ -16,10 +16,17 @@ import Html.Events exposing (..)
 import Json.Decode exposing (..)
 
 -- TODO: SETUP saved tabs read from firebase. DONE
--- TODO: update currentTabs on saved click
+-- TODO: update currentTabs on saved click DONE
 -- TODO: autofocus on load tabindex 0? SORT OF DONE?
 -- TODO: create view for saved data in saved tabs DONE
 -- TODO: delete saved tabs on click DONE
+
+-- TODO: Login page
+-- TODO: if saved and is open in current tabs saved == true (on init?)
+-- TODO: Break Elm into components and Clean up shitty code
+-- TODO: Drag and Drop the possition of the tabs? updates index and position
+-- TODO: Better navigation via keyboard, possible config for inputs?
+-- TODO:
 
 
 onKeyboardEvent: TabsList -> Attribute Msg
@@ -34,8 +41,12 @@ onKeyboardEvent tab =
               CycleUp
             else if code == 40 then
               CycleDown
-            else if code == 9 then
+            else if code == 9 || code == 83 then
               Save tab
+            else if code == 48 then
+              ShowSaved
+            else if code == 49 then
+              ShowCurrent
             else
               NoOp
     in
@@ -116,14 +127,13 @@ update msg model =
       ( model, activate tabId )
 
     Save tab ->
-      ( List.map (setTitleAtID title postID) model.posts , Effects.none )
-
-      setTitleAtID title postID post =
-        if post.id == postID then
-          { post | title = title }
-        else
-          post
-      ({ model | tabs = { savedTab | saved = True }}, save tab )
+      ({ model | tabs = List.map (setTabSaved tab) model.tabs }, save tab )
+            -- ({ model | tab = List.map (setTitleAtID tab tab.index) model.posts , Effects.none )
+      -- let
+      --   newModel =
+      --     update (tabs => tab => saved) (\saved -> True) model
+      -- in
+        -- (model, save tab)
 
     Delete val ->
       ( model , delete val )
@@ -164,8 +174,26 @@ update msg model =
     NoOp ->
       ( model, Cmd.none )
 
+-- Update functions
+-- wut is this anatactions
+setTabSaved: { b | index : a } -> { c | index : a, saved : Bool } -> { c | index : a, saved : Bool }
+setTabSaved tab tabs =
+  if tab.index == tabs.index then
+    { tabs | saved = True }
+  else
+    tabs
 
 
+-- for each tab in saved tabs if savedtab url === to tab url then tab saved = true
+-- checkIfSaved tabs savedTabs =
+--   List.map tabs
+--      List.map checkIfSaved2 savedTabs
+--
+-- checkIfSaved2 tab savedTabs =
+--   if  tab `notMember` savedTabs.url then
+--       { tab | saved = True }
+--   else
+--       tab
 
 -- SUBSCRIPTIONS
 
@@ -224,10 +252,18 @@ toLi tab =
     li [ class "list flex flex-row pa3 w-100 items-center"]
     [ img [ src tab.favIconUrl, height 25, width 25, class "pl2 pr2" ] [ ]
     , div [ class "w-60", onClick ( Activate tab.tabID ) ] [ text tab.title ]
-    , p [ class "w-20 ms-pt tc", onClick ( Save tab ) ] [ text  "save"  ]
+    , savedTab tab
     , button [ class "w-10 tc red ms-pt btn hover-style", onClick ( Close tab.tabID ), tabindex -1 ] [ text  "X" ]
     ]
   ]
+
+savedTab : TabsList -> Html Msg
+savedTab tab =
+  if tab.saved then
+    p [ class "w-20 tc saved" ] [ text  "saved"  ]
+  else
+    p [ class "w-20 ms-pt tc", onClick ( Save tab ) ] [ text  "save"  ]
+
 
 -- Saved view below
 

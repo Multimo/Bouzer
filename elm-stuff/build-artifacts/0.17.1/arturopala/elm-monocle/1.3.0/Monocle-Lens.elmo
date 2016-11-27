@@ -1,0 +1,82 @@
+var _arturopala$elm_monocle$Monocle_Lens$modifyAndMerge = F3(
+	function (lens, fx, merge) {
+		var mf = function (_p0) {
+			var _p1 = _p0;
+			var _p4 = _p1._0;
+			return function (_p2) {
+				var _p3 = _p2;
+				return {
+					ctor: '_Tuple2',
+					_0: A2(lens.set, _p3._0, _p4),
+					_1: A2(merge, _p1._1, _p3._1)
+				};
+			}(
+				fx(
+					lens.get(_p4)));
+		};
+		return mf;
+	});
+var _arturopala$elm_monocle$Monocle_Lens$modify = F2(
+	function (lens, f) {
+		var mf = function (a) {
+			return function (b) {
+				return A2(lens.set, b, a);
+			}(
+				f(
+					lens.get(a)));
+		};
+		return mf;
+	});
+var _arturopala$elm_monocle$Monocle_Lens$Lens = F2(
+	function (a, b) {
+		return {get: a, set: b};
+	});
+var _arturopala$elm_monocle$Monocle_Lens$compose = F2(
+	function (outer, inner) {
+		var set = F2(
+			function (c, a) {
+				return function (b) {
+					return A2(outer.set, b, a);
+				}(
+					A2(
+						inner.set,
+						c,
+						outer.get(a)));
+			});
+		return A2(
+			_arturopala$elm_monocle$Monocle_Lens$Lens,
+			function (_p5) {
+				return inner.get(
+					outer.get(_p5));
+			},
+			set);
+	});
+var _arturopala$elm_monocle$Monocle_Lens$fromIso = function (iso) {
+	var set = F2(
+		function (b, _p6) {
+			return iso.reverseGet(b);
+		});
+	return A2(_arturopala$elm_monocle$Monocle_Lens$Lens, iso.get, set);
+};
+var _arturopala$elm_monocle$Monocle_Lens$zip = F2(
+	function (left, right) {
+		var set = F2(
+			function (_p8, _p7) {
+				var _p9 = _p8;
+				var _p10 = _p7;
+				return {
+					ctor: '_Tuple2',
+					_0: A2(left.set, _p9._0, _p10._0),
+					_1: A2(right.set, _p9._1, _p10._1)
+				};
+			});
+		var get = function (_p11) {
+			var _p12 = _p11;
+			return {
+				ctor: '_Tuple2',
+				_0: left.get(_p12._0),
+				_1: right.get(_p12._1)
+			};
+		};
+		return A2(_arturopala$elm_monocle$Monocle_Lens$Lens, get, set);
+	});

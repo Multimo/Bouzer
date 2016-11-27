@@ -1,0 +1,81 @@
+var _arturopala$elm_monocle$Monocle_Prism$modifyOption = F2(
+	function (prism, f) {
+		return function (_p0) {
+			return A2(
+				_elm_lang$core$Maybe$map,
+				function (_p1) {
+					return prism.reverseGet(
+						f(_p1));
+				},
+				prism.getOption(_p0));
+		};
+	});
+var _arturopala$elm_monocle$Monocle_Prism$modify = F2(
+	function (prism, f) {
+		var m = function (x) {
+			return A2(
+				_elm_lang$core$Maybe$withDefault,
+				x,
+				A3(_arturopala$elm_monocle$Monocle_Prism$modifyOption, prism, f, x));
+		};
+		return m;
+	});
+var _arturopala$elm_monocle$Monocle_Prism$isMatching = F2(
+	function (prism, a) {
+		var _p2 = prism.getOption(a);
+		if (_p2.ctor === 'Just') {
+			return true;
+		} else {
+			return false;
+		}
+	});
+var _arturopala$elm_monocle$Monocle_Prism$Prism = F2(
+	function (a, b) {
+		return {getOption: a, reverseGet: b};
+	});
+var _arturopala$elm_monocle$Monocle_Prism$compose = F2(
+	function (outer, inner) {
+		var getOption = function (x) {
+			var _p3 = outer.getOption(x);
+			if (_p3.ctor === 'Just') {
+				return inner.getOption(_p3._0);
+			} else {
+				return _elm_lang$core$Maybe$Nothing;
+			}
+		};
+		return A2(
+			_arturopala$elm_monocle$Monocle_Prism$Prism,
+			getOption,
+			function (_p4) {
+				return outer.reverseGet(
+					inner.reverseGet(_p4));
+			});
+	});
+var _arturopala$elm_monocle$Monocle_Prism$composeIso = F2(
+	function (outer, inner) {
+		var getOption = function (x) {
+			var _p5 = outer.getOption(x);
+			if (_p5.ctor === 'Just') {
+				return _elm_lang$core$Maybe$Just(
+					inner.get(_p5._0));
+			} else {
+				return _elm_lang$core$Maybe$Nothing;
+			}
+		};
+		return A2(
+			_arturopala$elm_monocle$Monocle_Prism$Prism,
+			getOption,
+			function (_p6) {
+				return outer.reverseGet(
+					inner.reverseGet(_p6));
+			});
+	});
+var _arturopala$elm_monocle$Monocle_Prism$fromIso = function (iso) {
+	return A2(
+		_arturopala$elm_monocle$Monocle_Prism$Prism,
+		function (_p7) {
+			return _elm_lang$core$Maybe$Just(
+				iso.get(_p7));
+		},
+		iso.reverseGet);
+};

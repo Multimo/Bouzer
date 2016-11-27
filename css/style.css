@@ -50,3 +50,9 @@ background-color: #FFCCCC;
   color: #fff;
   transition: all .3s;
 }
+
+.saved {
+  text-decoration: line-through;
+  color: #FFCCCC;
+  transition: all .3s;
+}

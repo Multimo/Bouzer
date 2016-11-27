@@ -23,15 +23,12 @@ const savedTabsRef = ref.child("savedTabs");
 //event listener that will update elm model upon change
 savedTabsRef.on("value", function(snapshot) {
   const savedObj = snapshot.val();
-
   const savedArr = [];
   for (let key of Object.keys(savedObj)) {
     const val = savedObj[key];
     val.fireRef = key;
-    // console.log(val);
     savedArr.push(val)
   }
-  console.log(savedArr)
   app.ports.savedTabs.send(savedArr);
 }, function (errorObject) {
   console.log("The read failed: " + errorObject.code);
@@ -40,7 +37,6 @@ savedTabsRef.on("value", function(snapshot) {
 
 
 function handleUpdated(tabId, changeInfo, tabInfo) {
-
   chrome.tabs.query({
       currentWindow: true
     }, function(data) {
@@ -55,7 +51,6 @@ chrome.tabs.onCreated.addListener(handleUpdated);
 app.ports.close.subscribe(function(tab) {
     // close tab here
     chrome.tabs.remove(tab, function() {});
-
     // send back new state here
     chrome.tabs.query({
         currentWindow: true
@@ -72,7 +67,6 @@ app.ports.save.subscribe(function(tab) {
 app.ports.activate.subscribe(function(tab) {
     // makes tab active here
     chrome.tabs.update(tab,  {selected: true} );
-
     // sends back new state here
     chrome.tabs.query({
         currentWindow: true
@@ -84,11 +78,10 @@ app.ports.activate.subscribe(function(tab) {
 // removes tab from saved list
 app.ports.delete.subscribe(function(url) {
     savedTabsRef.orderByChild('url').equalTo(url).on('child_added', function(snapshot) {
-        console.log(snapshot.key + " was " + snapshot.val().url + " meters tall");
         savedTabsRef.child(snapshot.key).remove().then(function(){
-            console.log("Remove succeeded.")
+            // console.log("Remove succeeded.")
           }).catch(function(error) {
-            console.log("Remove failed: " + error.message)
+            // console.log("Remove failed: " + error.message)
           })
     });
 });

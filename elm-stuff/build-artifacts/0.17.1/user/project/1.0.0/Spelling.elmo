@@ -1,6 +1,12 @@
 var _user$project$Spelling$isFirst = function (index) {
 	return _elm_lang$core$Native_Utils.eq(index, 0) ? true : false;
 };
+var _user$project$Spelling$setTabSaved = F2(
+	function (tab, tabs) {
+		return _elm_lang$core$Native_Utils.eq(tab.index, tabs.index) ? _elm_lang$core$Native_Utils.update(
+			tabs,
+			{saved: true}) : tabs;
+	});
 var _user$project$Spelling$close = _elm_lang$core$Native_Platform.outgoingPort(
 	'close',
 	function (v) {
@@ -160,10 +166,18 @@ var _user$project$Spelling$update = F2(
 					_1: _user$project$Spelling$activate(_p0._0)
 				};
 			case 'Save':
+				var _p1 = _p0._0;
 				return {
 					ctor: '_Tuple2',
-					_0: model,
-					_1: _user$project$Spelling$save(_p0._0)
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{
+							tabs: A2(
+								_elm_lang$core$List$map,
+								_user$project$Spelling$setTabSaved(_p1),
+								model.tabs)
+						}),
+					_1: _user$project$Spelling$save(_p1)
 				};
 			case 'Delete':
 				return {
@@ -183,8 +197,8 @@ var _user$project$Spelling$update = F2(
 					function (error) {
 						return _user$project$Spelling$NoOp;
 					},
-					function (_p1) {
-						var _p2 = _p1;
+					function (_p2) {
+						var _p3 = _p2;
 						return _user$project$Spelling$NoOp;
 					},
 					_elm_lang$dom$Dom$focus(
@@ -202,8 +216,8 @@ var _user$project$Spelling$update = F2(
 					function (error) {
 						return _user$project$Spelling$NoOp;
 					},
-					function (_p3) {
-						var _p4 = _p3;
+					function (_p4) {
+						var _p5 = _p4;
 						return _user$project$Spelling$NoOp;
 					},
 					_elm_lang$dom$Dom$focus(
@@ -221,8 +235,8 @@ var _user$project$Spelling$update = F2(
 					function (error) {
 						return _user$project$Spelling$NoOp;
 					},
-					function (_p5) {
-						var _p6 = _p5;
+					function (_p6) {
+						var _p7 = _p6;
 						return _user$project$Spelling$NoOp;
 					},
 					_elm_lang$dom$Dom$focus(
@@ -262,6 +276,29 @@ var _user$project$Spelling$Delete = function (a) {
 var _user$project$Spelling$Save = function (a) {
 	return {ctor: 'Save', _0: a};
 };
+var _user$project$Spelling$savedTab = function (tab) {
+	return tab.saved ? A2(
+		_elm_lang$html$Html$p,
+		_elm_lang$core$Native_List.fromArray(
+			[
+				_elm_lang$html$Html_Attributes$class('w-20 tc saved')
+			]),
+		_elm_lang$core$Native_List.fromArray(
+			[
+				_elm_lang$html$Html$text('saved')
+			])) : A2(
+		_elm_lang$html$Html$p,
+		_elm_lang$core$Native_List.fromArray(
+			[
+				_elm_lang$html$Html_Attributes$class('w-20 ms-pt tc'),
+				_elm_lang$html$Html_Events$onClick(
+				_user$project$Spelling$Save(tab))
+			]),
+		_elm_lang$core$Native_List.fromArray(
+			[
+				_elm_lang$html$Html$text('save')
+			]));
+};
 var _user$project$Spelling$CycleDown = {ctor: 'CycleDown'};
 var _user$project$Spelling$CycleUp = {ctor: 'CycleUp'};
 var _user$project$Spelling$Activate = function (a) {
@@ -272,7 +309,7 @@ var _user$project$Spelling$Close = function (a) {
 };
 var _user$project$Spelling$onKeyboardEvent = function (tab) {
 	var tagger = function (code) {
-		return (_elm_lang$core$Native_Utils.eq(code, 13) || _elm_lang$core$Native_Utils.eq(code, 37)) ? _user$project$Spelling$Activate(tab.tabID) : ((_elm_lang$core$Native_Utils.eq(code, 8) || _elm_lang$core$Native_Utils.eq(code, 39)) ? _user$project$Spelling$Close(tab.tabID) : ((_elm_lang$core$Native_Utils.eq(code, 38) || _elm_lang$core$Native_Utils.eq(code, 9)) ? _user$project$Spelling$CycleUp : (_elm_lang$core$Native_Utils.eq(code, 40) ? _user$project$Spelling$CycleDown : (_elm_lang$core$Native_Utils.eq(code, 9) ? _user$project$Spelling$Save(tab) : _user$project$Spelling$NoOp))));
+		return (_elm_lang$core$Native_Utils.eq(code, 13) || _elm_lang$core$Native_Utils.eq(code, 37)) ? _user$project$Spelling$Activate(tab.tabID) : ((_elm_lang$core$Native_Utils.eq(code, 8) || _elm_lang$core$Native_Utils.eq(code, 39)) ? _user$project$Spelling$Close(tab.tabID) : ((_elm_lang$core$Native_Utils.eq(code, 38) || _elm_lang$core$Native_Utils.eq(code, 9)) ? _user$project$Spelling$CycleUp : (_elm_lang$core$Native_Utils.eq(code, 40) ? _user$project$Spelling$CycleDown : ((_elm_lang$core$Native_Utils.eq(code, 9) || _elm_lang$core$Native_Utils.eq(code, 83)) ? _user$project$Spelling$Save(tab) : (_elm_lang$core$Native_Utils.eq(code, 48) ? _user$project$Spelling$ShowSaved : (_elm_lang$core$Native_Utils.eq(code, 49) ? _user$project$Spelling$ShowCurrent : _user$project$Spelling$NoOp))))));
 	};
 	return A2(
 		_elm_lang$html$Html_Events$on,
@@ -400,18 +437,7 @@ var _user$project$Spelling$toLi = function (tab) {
 							[
 								_elm_lang$html$Html$text(tab.title)
 							])),
-						A2(
-						_elm_lang$html$Html$p,
-						_elm_lang$core$Native_List.fromArray(
-							[
-								_elm_lang$html$Html_Attributes$class('w-20 ms-pt tc'),
-								_elm_lang$html$Html_Events$onClick(
-								_user$project$Spelling$Save(tab))
-							]),
-						_elm_lang$core$Native_List.fromArray(
-							[
-								_elm_lang$html$Html$text('save')
-							])),
+						_user$project$Spelling$savedTab(tab),
 						A2(
 						_elm_lang$html$Html$button,
 						_elm_lang$core$Native_List.fromArray(

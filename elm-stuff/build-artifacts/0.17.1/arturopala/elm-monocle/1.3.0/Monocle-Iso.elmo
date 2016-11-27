@@ -1,0 +1,28 @@
+var _arturopala$elm_monocle$Monocle_Iso$modify = F2(
+	function (iso, f) {
+		return function (_p0) {
+			return iso.reverseGet(
+				f(
+					iso.get(_p0)));
+		};
+	});
+var _arturopala$elm_monocle$Monocle_Iso$Iso = F2(
+	function (a, b) {
+		return {get: a, reverseGet: b};
+	});
+var _arturopala$elm_monocle$Monocle_Iso$reverse = function (iso) {
+	return A2(_arturopala$elm_monocle$Monocle_Iso$Iso, iso.reverseGet, iso.get);
+};
+var _arturopala$elm_monocle$Monocle_Iso$compose = F2(
+	function (outer, inner) {
+		return A2(
+			_arturopala$elm_monocle$Monocle_Iso$Iso,
+			function (_p1) {
+				return inner.get(
+					outer.get(_p1));
+			},
+			function (_p2) {
+				return outer.reverseGet(
+					inner.reverseGet(_p2));
+			});
+	});

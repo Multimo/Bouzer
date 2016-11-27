@@ -1,0 +1,55 @@
+var _arturopala$elm_monocle$Monocle_Common$second = {
+	get: _elm_lang$core$Basics$snd,
+	set: F2(
+		function (b, _p0) {
+			var _p1 = _p0;
+			return {ctor: '_Tuple2', _0: _p1._0, _1: b};
+		})
+};
+var _arturopala$elm_monocle$Monocle_Common$first = {
+	get: _elm_lang$core$Basics$fst,
+	set: F2(
+		function (a, _p2) {
+			var _p3 = _p2;
+			return {ctor: '_Tuple2', _0: a, _1: _p3._1};
+		})
+};
+var _arturopala$elm_monocle$Monocle_Common$id = {
+	get: function (_) {
+		return _.id;
+	},
+	set: F2(
+		function (id, record) {
+			return _elm_lang$core$Native_Utils.update(
+				record,
+				{id: id});
+		})
+};
+var _arturopala$elm_monocle$Monocle_Common$result = {
+	getOption: _elm_lang$core$Result$toMaybe,
+	set: function (_p4) {
+		return _elm_lang$core$Basics$always(
+			_elm_lang$core$Result$Ok(_p4));
+	}
+};
+var _arturopala$elm_monocle$Monocle_Common$dict = function (key) {
+	return {
+		getOption: _elm_lang$core$Dict$get(key),
+		set: _elm_lang$core$Dict$insert(key)
+	};
+};
+var _arturopala$elm_monocle$Monocle_Common$array = function (index) {
+	return {
+		getOption: _elm_lang$core$Array$get(index),
+		set: _elm_lang$core$Array$set(index)
+	};
+};
+var _arturopala$elm_monocle$Monocle_Common$maybe = {
+	getOption: _elm_lang$core$Basics$identity,
+	set: function (_p5) {
+		return _elm_lang$core$Basics$always(
+			_elm_lang$core$Maybe$Just(_p5));
+	}
+};
+var _arturopala$elm_monocle$Monocle_Common_ops = _arturopala$elm_monocle$Monocle_Common_ops || {};
+_arturopala$elm_monocle$Monocle_Common_ops['=>'] = _arturopala$elm_monocle$Monocle_Optional$compose;
