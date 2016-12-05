@@ -59,6 +59,25 @@ app.ports.close.subscribe(function(tab) {
       });
 });
 
+app.ports.logIn.subscribe(function(data) {
+  var email = data[0];
+  var password = data[1];
+  firebase.auth().signInWithEmailAndPassword(email, password)
+  .then(function(res){
+    console.log(res.uid)
+    const dbref = db.ref(res.uid);
+    app.ports.logInSuccess.send(res.uid);
+  }).catch(function(error) {
+
+  console.log(error)
+  var errorCode = error.code;
+  var errorMessage = error.message;
+  app.ports.logInFail.send(errorMessage);
+});
+  console.log(data);
+});
+
+
 // Save to firebase
 app.ports.save.subscribe(function(tab) {
     savedTabsRef.push(tab);

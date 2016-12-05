@@ -1,78 +1,9 @@
-var _user$project$Events$onKeyUp = function (options) {
-	var filter = F2(
-		function (optionsToCheck, code) {
-			filter:
-			while (true) {
-				var _p0 = optionsToCheck;
-				if (_p0.ctor === '[]') {
-					return _elm_lang$core$Result$Err('key code is not in the list');
-				} else {
-					if (_elm_lang$core$Native_Utils.eq(_p0._0._0, code)) {
-						return _elm_lang$core$Result$Ok(_p0._0._1);
-					} else {
-						var _v1 = _p0._1,
-							_v2 = code;
-						optionsToCheck = _v1;
-						code = _v2;
-						continue filter;
-					}
-				}
-			}
-		});
-	var keyCodes = A2(
-		_elm_lang$core$Json_Decode$customDecoder,
-		_elm_lang$html$Html_Events$keyCode,
-		filter(options));
-	return A2(_elm_lang$html$Html_Events$on, 'keyup', keyCodes);
-};
-var _user$project$Events$onBackOrRight = function (msg) {
-	return _user$project$Events$onKeyUp(
-		_elm_lang$core$Native_List.fromArray(
-			[
-				{ctor: '_Tuple2', _0: 39, _1: msg},
-				{ctor: '_Tuple2', _0: 8, _1: msg}
-			]));
-};
-var _user$project$Events$onEnterOrLeft = function (msg) {
-	return _user$project$Events$onKeyUp(
-		_elm_lang$core$Native_List.fromArray(
-			[
-				{ctor: '_Tuple2', _0: 13, _1: msg},
-				{ctor: '_Tuple2', _0: 37, _1: msg}
-			]));
-};
-var _user$project$Events$onDownArrow = function (msg) {
-	return _user$project$Events$onKeyUp(
-		_elm_lang$core$Native_List.fromArray(
-			[
-				{ctor: '_Tuple2', _0: 40, _1: msg}
-			]));
-};
-var _user$project$Events$onUpArrow = function (msg) {
-	return _user$project$Events$onKeyUp(
-		_elm_lang$core$Native_List.fromArray(
-			[
-				{ctor: '_Tuple2', _0: 38, _1: msg}
-			]));
-};
-var _user$project$Events$onLeftArrow = function (msg) {
-	return _user$project$Events$onKeyUp(
-		_elm_lang$core$Native_List.fromArray(
-			[
-				{ctor: '_Tuple2', _0: 37, _1: msg}
-			]));
-};
-var _user$project$Events$onRightArrow = function (msg) {
-	return _user$project$Events$onKeyUp(
-		_elm_lang$core$Native_List.fromArray(
-			[
-				{ctor: '_Tuple2', _0: 39, _1: msg}
-			]));
-};
-var _user$project$Events$onEnter = function (msg) {
-	return _user$project$Events$onKeyUp(
-		_elm_lang$core$Native_List.fromArray(
-			[
-				{ctor: '_Tuple2', _0: 13, _1: msg}
-			]));
+var _user$project$Events$onKeyboardEvent = function (tab) {
+	var tagger = function (code) {
+		return (_elm_lang$core$Native_Utils.eq(code, 13) || _elm_lang$core$Native_Utils.eq(code, 37)) ? _user$project$Spelling$Activate(tab.tabID) : ((_elm_lang$core$Native_Utils.eq(code, 8) || _elm_lang$core$Native_Utils.eq(code, 39)) ? _user$project$Spelling$Close(tab.tabID) : ((_elm_lang$core$Native_Utils.eq(code, 38) || _elm_lang$core$Native_Utils.eq(code, 9)) ? _user$project$Spelling$CycleUp : (_elm_lang$core$Native_Utils.eq(code, 40) ? _user$project$Spelling$CycleDown : ((_elm_lang$core$Native_Utils.eq(code, 9) || _elm_lang$core$Native_Utils.eq(code, 83)) ? _user$project$Spelling$Save(tab) : (_elm_lang$core$Native_Utils.eq(code, 48) ? _user$project$Spelling$ShowSaved : (_elm_lang$core$Native_Utils.eq(code, 49) ? _user$project$Spelling$ShowCurrent : _user$project$Spelling$NoOp))))));
+	};
+	return A2(
+		_elm_lang$html$Html_Events$on,
+		'keydown',
+		A2(_elm_lang$core$Json_Decode$map, tagger, _elm_lang$html$Html_Events$keyCode));
 };

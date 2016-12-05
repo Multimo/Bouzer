@@ -8,12 +8,14 @@ import Html.Events exposing (..)
 import List exposing (..)
 import Dom exposing (..)
 import Task exposing (..)
+import String exposing (isEmpty)
 
 -- import Debug
 -- import Events exposing (..)
 
 import Html.Events exposing (..)
 import Json.Decode exposing (..)
+import Events exposing (onKeyboardEvent)
 
 -- TODO: SETUP saved tabs read from firebase. DONE
 -- TODO: update currentTabs on saved click DONE
@@ -21,12 +23,11 @@ import Json.Decode exposing (..)
 -- TODO: create view for saved data in saved tabs DONE
 -- TODO: delete saved tabs on click DONE
 
--- TODO: Login page
+-- TODO: Login page. create user and db ref && forgot password? & logout?
 -- TODO: if saved and is open in current tabs saved == true (on init?)
 -- TODO: Break Elm into components and Clean up shitty code
 -- TODO: Drag and Drop the possition of the tabs? updates index and position
 -- TODO: Better navigation via keyboard, possible config for inputs?
--- TODO:
 
 
 onKeyboardEvent: TabsList -> Attribute Msg
@@ -81,11 +82,17 @@ type alias Model =
   , savedTabs : List TabsList
   , tabIndex : Int
   , render: Bool
+  , username: String
+  , password: String
+  , loggedIn: String
+  , logInFail: String
+  , logInSuccess: String
   }
+
 
 init : (Model, Cmd msg)
 init =
-  (Model [] [] 0 True, Cmd.none )
+  (Model [] [] 0 True "" "" "" "" "", Cmd.none )
 
 
 -- UPDATE
@@ -103,6 +110,11 @@ type Msg
   | Focus Int
   | ShowCurrent
   | ShowSaved
+  | LogIn
+  | UpdateUserName String
+  | UpdatePassword String
+  | SuccessLogIn String
+  | FailLogIn String
   | NoOp
 
 port close : Int -> Cmd msg
@@ -110,6 +122,7 @@ port save : TabsList -> Cmd msg
 port activate : Int -> Cmd msg
 port delete : String -> Cmd msg
 port open : String -> Cmd msg
+port logIn : (String, String) -> Cmd msg
 
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
@@ -171,11 +184,29 @@ update msg model =
     ShowSaved ->
         ({ model | render = False }, Cmd.none )
 
+    UpdateUserName val ->
+      ({  model | username = val }, Cmd.none)
+
+    UpdatePassword val ->
+      ({  model | password = val }, Cmd.none)
+
+    LogIn ->
+        let
+            data = (model.username, model.password)
+        in
+      (model, logIn data )
+
+    SuccessLogIn message ->
+      ({ model | logInSuccess = message }, Cmd.none)
+
+    FailLogIn message ->
+      ({model | logInFail = message }, Cmd.none)
+
     NoOp ->
       ( model, Cmd.none )
 
 -- Update functions
--- wut is this anatactions
+-- wut is this anotactions
 setTabSaved: { b | index : a } -> { c | index : a, saved : Bool } -> { c | index : a, saved : Bool }
 setTabSaved tab tabs =
   if tab.index == tabs.index then
@@ -183,22 +214,12 @@ setTabSaved tab tabs =
   else
     tabs
 
-
--- for each tab in saved tabs if savedtab url === to tab url then tab saved = true
--- checkIfSaved tabs savedTabs =
---   List.map tabs
---      List.map checkIfSaved2 savedTabs
---
--- checkIfSaved2 tab savedTabs =
---   if  tab `notMember` savedTabs.url then
---       { tab | saved = True }
---   else
---       tab
-
 -- SUBSCRIPTIONS
 
 port initialTabs : ( List TabsList -> msg ) -> Sub msg
 port savedTabs : ( List TabsList -> msg ) -> Sub msg
+port logInSuccess : ( String -> msg ) -> Sub msg
+port logInFail : ( String -> msg ) -> Sub msg
 
 
 subscriptions : Model -> Sub Msg
@@ -206,6 +227,8 @@ subscriptions model =
   Sub.batch
   [ initialTabs Tabs
   , savedTabs TabsSaved
+  , logInSuccess SuccessLogIn
+  , logInFail FailLogIn
   ]
 
 
@@ -222,20 +245,46 @@ renderList: Model -> Html Msg
 renderList model =
   ( if model.render == True then tabsList model.tabs else savedTabsList model.savedTabs )
 
+isLoggedIn: Model -> Html Msg
+isLoggedIn model =
+  ( if String.isEmpty model.logInSuccess then login model else app model )
+
+
+
+-- root view component
 view : Model -> Html Msg
 view model =
-  div [ class "pa2 w-100 flex flex-column container bg-lightest-blue"]
-  [ div [ class "w-100 flex flex-row container self-center bg-lightest-blue" ]  [
-        div [ class ( "render-tabs pa2 w-50 flex justify-center" ++ ( if model.render then " active" else "" ))
-        , onClick ShowCurrent ]  [ text "Current" ]
-      , div [ class ( "render-tabs pa2 w-50 flex justify-center" ++ ( if model.render == False then " active" else "" ))
-      , onClick ShowSaved ]  [ text "Saved" ]
-    ]
-  , div [ class "pa2 w-100 flex flex-column container bg-lightest-blue" ]  [ renderList model ]
+  div [ class "pa2 w-100 flex flex-column login-container "]
+  [ div [ class "w-100 flex flex-column container " ] [ isLoggedIn model ] ]
+
+
+-- Login Gatekeeper
+login: Model -> Html Msg
+login model =
+  div [ class "pa2 w-100 flex flex-column" ]
+  [ h1 [ class "pa2 tc white" ] [ text "Please Log In" ]
+    , h2 [ class "pa2 tc white" ] [ text model.logInFail ]
+    , input [ type' "text", placeholder "UserName", class "login-input", onInput UpdateUserName ] []
+    , input [ type' "password", placeholder "Password", class "login-input", onInput UpdatePassword ] []
+    , button [ onClick ( LogIn ), class "login-submit" ] [ text "Log In" ]
   ]
 
--- Active tabs view below
 
+-- App parent
+app : Model -> Html Msg
+app model =
+  div [] [
+    div [ class "w-100 flex flex-row container self-center" ]  [
+          div [ class ( "render-tabs pa2 w-50 flex justify-center" ++ ( if model.render then " active" else "" ))
+          , onClick ShowCurrent ]  [ text "Current" ]
+        , div [ class ( "render-tabs pa2 w-50 flex justify-center" ++ ( if model.render == False then " active" else "" ))
+        , onClick ShowSaved ]  [ text "Saved" ]
+      ]
+    , div [ class "w-100 flex flex-column container " ]  [ renderList model ]
+  ]
+
+
+-- Active tabs view below
 tabsList : List TabsList -> Html Msg
 tabsList tabs =
     ul [ class "pa0 flex-column flex self-center w-100" ]

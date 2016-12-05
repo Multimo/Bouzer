@@ -21,7 +21,12 @@
 }
 body {
 overflow-x: hidden;
-background-color: #FFCCCC;
+background: #EA5C54;
+background: -webkit-gradient(linear, left top, right bottom, color-stop(0%, #EA5C54), color-stop(100%, #bb6dec));
+background: -webkit-linear-gradient(-45deg, #EA5C54 0%, #bb6dec 100%);
+background: -webkit-linear-gradient(315deg, #EA5C54 0%, #bb6dec 100%);
+background: linear-gradient(135deg, #EA5C54 0%, #bb6dec 100%);
+font-family: 'Raleway', sans-serif;
 }
 .container {
   background-color: rgb(65, 67, 69);
@@ -49,10 +54,72 @@ background-color: #FFCCCC;
 .render-tabs {
   color: #fff;
   transition: all .3s;
+  font-size: 1.5em;
 }
 
 .saved {
   text-decoration: line-through;
   color: #FFCCCC;
   transition: all .3s;
+}
+
+.login-input {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  outline: 0;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  background-color: rgba(255, 255, 255);
+  width: 250px;
+  border-radius: 50px;
+  padding: 10px 15px;
+  margin: 0 auto 10px auto;
+  display: block;
+  text-align: center;
+  font-size: 1.1em;
+  color: #242627;
+  -webkit-transition-duration: 0.25s;
+  transition-duration: 0.25s;
+  font-weight: 300;
+}
+
+.login-input:focus {
+  background: white;
+  color: #333333;
+}
+
+.login-submit {
+  border-radius: 50px;
+  background: transparent;
+  padding: 10px 50px;
+  border: 2px solid #DC6180;
+  color: #DC6180;
+  text-transform: uppercase;
+  font-size: 1.1em;
+  width: 250px;
+  margin: auto;
+  margin-bottom: 20px;
+  padding: 10px 15px;
+  -webkit-transition-property: background,color;
+  transition-property: background,color;
+  -webkit-transition-duration: .2s;
+  transition-duration: .3s;
+  outline: none;
+}
+
+.login-submit:hover {
+  background: #EA5C54;
+  background: -webkit-gradient(linear, left top, right bottom, color-stop(0%, #EA5C54), color-stop(100%, #bb6dec));
+  background: -webkit-linear-gradient(-45deg, #EA5C54 0%, #bb6dec 100%);
+  background: -webkit-linear-gradient(315deg, #EA5C54 0%, #bb6dec 100%);
+  background: linear-gradient(135deg, #EA5C54 0%, #bb6dec 100%);
+  color: white;
+}
+
+.login-container {
+  background: #EA5C54;
+  background: -webkit-gradient(linear, left top, right bottom, color-stop(0%, #EA5C54), color-stop(100%, #bb6dec));
+  background: -webkit-linear-gradient(-45deg, #EA5C54 0%, #bb6dec 100%);
+  background: -webkit-linear-gradient(315deg, #EA5C54 0%, #bb6dec 100%);
+  background: linear-gradient(135deg, #EA5C54 0%, #bb6dec 100%);
 }

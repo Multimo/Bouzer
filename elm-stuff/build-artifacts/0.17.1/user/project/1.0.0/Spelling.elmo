@@ -32,6 +32,11 @@ var _user$project$Spelling$open = _elm_lang$core$Native_Platform.outgoingPort(
 	function (v) {
 		return v;
 	});
+var _user$project$Spelling$logIn = _elm_lang$core$Native_Platform.outgoingPort(
+	'logIn',
+	function (v) {
+		return [v._0, v._1];
+	});
 var _user$project$Spelling$initialTabs = _elm_lang$core$Native_Platform.incomingPort(
 	'initialTabs',
 	_elm_lang$core$Json_Decode$list(
@@ -112,24 +117,31 @@ var _user$project$Spelling$savedTabs = _elm_lang$core$Native_Platform.incomingPo
 							});
 					});
 			})));
+var _user$project$Spelling$logInSuccess = _elm_lang$core$Native_Platform.incomingPort('logInSuccess', _elm_lang$core$Json_Decode$string);
+var _user$project$Spelling$logInFail = _elm_lang$core$Native_Platform.incomingPort('logInFail', _elm_lang$core$Json_Decode$string);
 var _user$project$Spelling$TabsList = F7(
 	function (a, b, c, d, e, f, g) {
 		return {url: a, title: b, index: c, active: d, tabID: e, saved: f, favIconUrl: g};
 	});
-var _user$project$Spelling$Model = F4(
-	function (a, b, c, d) {
-		return {tabs: a, savedTabs: b, tabIndex: c, render: d};
+var _user$project$Spelling$Model = F9(
+	function (a, b, c, d, e, f, g, h, i) {
+		return {tabs: a, savedTabs: b, tabIndex: c, render: d, username: e, password: f, loggedIn: g, logInFail: h, logInSuccess: i};
 	});
 var _user$project$Spelling$init = {
 	ctor: '_Tuple2',
-	_0: A4(
+	_0: A9(
 		_user$project$Spelling$Model,
 		_elm_lang$core$Native_List.fromArray(
 			[]),
 		_elm_lang$core$Native_List.fromArray(
 			[]),
 		0,
-		true),
+		true,
+		'',
+		'',
+		'',
+		'',
+		''),
 	_1: _elm_lang$core$Platform_Cmd$none
 };
 var _user$project$Spelling$NoOp = {ctor: 'NoOp'};
@@ -258,10 +270,126 @@ var _user$project$Spelling$update = F2(
 						{render: false}),
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
+			case 'UpdateUserName':
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{username: _p0._0}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+			case 'UpdatePassword':
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{password: _p0._0}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+			case 'LogIn':
+				var data = {ctor: '_Tuple2', _0: model.username, _1: model.password};
+				return {
+					ctor: '_Tuple2',
+					_0: model,
+					_1: _user$project$Spelling$logIn(data)
+				};
+			case 'SuccessLogIn':
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{logInSuccess: _p0._0}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+			case 'FailLogIn':
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{logInFail: _p0._0}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
 			default:
 				return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
 		}
 	});
+var _user$project$Spelling$FailLogIn = function (a) {
+	return {ctor: 'FailLogIn', _0: a};
+};
+var _user$project$Spelling$SuccessLogIn = function (a) {
+	return {ctor: 'SuccessLogIn', _0: a};
+};
+var _user$project$Spelling$UpdatePassword = function (a) {
+	return {ctor: 'UpdatePassword', _0: a};
+};
+var _user$project$Spelling$UpdateUserName = function (a) {
+	return {ctor: 'UpdateUserName', _0: a};
+};
+var _user$project$Spelling$LogIn = {ctor: 'LogIn'};
+var _user$project$Spelling$login = function (model) {
+	return A2(
+		_elm_lang$html$Html$div,
+		_elm_lang$core$Native_List.fromArray(
+			[
+				_elm_lang$html$Html_Attributes$class('pa2 w-100 flex flex-column')
+			]),
+		_elm_lang$core$Native_List.fromArray(
+			[
+				A2(
+				_elm_lang$html$Html$h1,
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html_Attributes$class('pa2 tc white')
+					]),
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html$text('Please Log In')
+					])),
+				A2(
+				_elm_lang$html$Html$h2,
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html_Attributes$class('pa2 tc white')
+					]),
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html$text(model.logInFail)
+					])),
+				A2(
+				_elm_lang$html$Html$input,
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html_Attributes$type$('text'),
+						_elm_lang$html$Html_Attributes$placeholder('UserName'),
+						_elm_lang$html$Html_Attributes$class('login-input'),
+						_elm_lang$html$Html_Events$onInput(_user$project$Spelling$UpdateUserName)
+					]),
+				_elm_lang$core$Native_List.fromArray(
+					[])),
+				A2(
+				_elm_lang$html$Html$input,
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html_Attributes$type$('password'),
+						_elm_lang$html$Html_Attributes$placeholder('Password'),
+						_elm_lang$html$Html_Attributes$class('login-input'),
+						_elm_lang$html$Html_Events$onInput(_user$project$Spelling$UpdatePassword)
+					]),
+				_elm_lang$core$Native_List.fromArray(
+					[])),
+				A2(
+				_elm_lang$html$Html$button,
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html_Events$onClick(_user$project$Spelling$LogIn),
+						_elm_lang$html$Html_Attributes$class('login-submit')
+					]),
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html$text('Log In')
+					]))
+			]));
+};
 var _user$project$Spelling$ShowSaved = {ctor: 'ShowSaved'};
 var _user$project$Spelling$ShowCurrent = {ctor: 'ShowCurrent'};
 var _user$project$Spelling$Focus = function (a) {
@@ -466,20 +594,18 @@ var _user$project$Spelling$tabsList = function (tabs) {
 var _user$project$Spelling$renderList = function (model) {
 	return _elm_lang$core$Native_Utils.eq(model.render, true) ? _user$project$Spelling$tabsList(model.tabs) : _user$project$Spelling$savedTabsList(model.savedTabs);
 };
-var _user$project$Spelling$view = function (model) {
+var _user$project$Spelling$app = function (model) {
 	return A2(
 		_elm_lang$html$Html$div,
 		_elm_lang$core$Native_List.fromArray(
-			[
-				_elm_lang$html$Html_Attributes$class('pa2 w-100 flex flex-column container bg-lightest-blue')
-			]),
+			[]),
 		_elm_lang$core$Native_List.fromArray(
 			[
 				A2(
 				_elm_lang$html$Html$div,
 				_elm_lang$core$Native_List.fromArray(
 					[
-						_elm_lang$html$Html_Attributes$class('w-100 flex flex-row container self-center bg-lightest-blue')
+						_elm_lang$html$Html_Attributes$class('w-100 flex flex-row container self-center')
 					]),
 				_elm_lang$core$Native_List.fromArray(
 					[
@@ -518,11 +644,35 @@ var _user$project$Spelling$view = function (model) {
 				_elm_lang$html$Html$div,
 				_elm_lang$core$Native_List.fromArray(
 					[
-						_elm_lang$html$Html_Attributes$class('pa2 w-100 flex flex-column container bg-lightest-blue')
+						_elm_lang$html$Html_Attributes$class('w-100 flex flex-column container ')
 					]),
 				_elm_lang$core$Native_List.fromArray(
 					[
 						_user$project$Spelling$renderList(model)
+					]))
+			]));
+};
+var _user$project$Spelling$isLoggedIn = function (model) {
+	return _elm_lang$core$String$isEmpty(model.logInSuccess) ? _user$project$Spelling$login(model) : _user$project$Spelling$app(model);
+};
+var _user$project$Spelling$view = function (model) {
+	return A2(
+		_elm_lang$html$Html$div,
+		_elm_lang$core$Native_List.fromArray(
+			[
+				_elm_lang$html$Html_Attributes$class('pa2 w-100 flex flex-column login-container ')
+			]),
+		_elm_lang$core$Native_List.fromArray(
+			[
+				A2(
+				_elm_lang$html$Html$div,
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html_Attributes$class('w-100 flex flex-column container ')
+					]),
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_user$project$Spelling$isLoggedIn(model)
 					]))
 			]));
 };
@@ -537,7 +687,9 @@ var _user$project$Spelling$subscriptions = function (model) {
 		_elm_lang$core$Native_List.fromArray(
 			[
 				_user$project$Spelling$initialTabs(_user$project$Spelling$Tabs),
-				_user$project$Spelling$savedTabs(_user$project$Spelling$TabsSaved)
+				_user$project$Spelling$savedTabs(_user$project$Spelling$TabsSaved),
+				_user$project$Spelling$logInSuccess(_user$project$Spelling$SuccessLogIn),
+				_user$project$Spelling$logInFail(_user$project$Spelling$FailLogIn)
 			]));
 };
 var _user$project$Spelling$main = {
