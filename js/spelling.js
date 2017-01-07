@@ -8311,45 +8311,694 @@ var _elm_lang$html$Html_Events$Options = F2(
 		return {stopPropagation: a, preventDefault: b};
 	});
 
-var _user$project$Spelling$isFirst = function (index) {
-	return _elm_lang$core$Native_Utils.eq(index, 0) ? true : false;
-};
-var _user$project$Spelling$setTabSaved = F2(
+var _user$project$Model$TabsList = F7(
+	function (a, b, c, d, e, f, g) {
+		return {url: a, title: b, index: c, active: d, tabID: e, saved: f, favIconUrl: g};
+	});
+var _user$project$Model$Model = F9(
+	function (a, b, c, d, e, f, g, h, i) {
+		return {tabs: a, savedTabs: b, tabIndex: c, render: d, username: e, password: f, loggedIn: g, logInFail: h, logInSuccess: i};
+	});
+
+var _user$project$Messages$setTabSaved = F2(
 	function (tab, tabs) {
 		return _elm_lang$core$Native_Utils.eq(tab.index, tabs.index) ? _elm_lang$core$Native_Utils.update(
 			tabs,
 			{saved: true}) : tabs;
 	});
-var _user$project$Spelling$close = _elm_lang$core$Native_Platform.outgoingPort(
+var _user$project$Messages$close = _elm_lang$core$Native_Platform.outgoingPort(
 	'close',
 	function (v) {
 		return v;
 	});
-var _user$project$Spelling$save = _elm_lang$core$Native_Platform.outgoingPort(
+var _user$project$Messages$save = _elm_lang$core$Native_Platform.outgoingPort(
 	'save',
 	function (v) {
 		return {url: v.url, title: v.title, index: v.index, active: v.active, tabID: v.tabID, saved: v.saved, favIconUrl: v.favIconUrl};
 	});
-var _user$project$Spelling$activate = _elm_lang$core$Native_Platform.outgoingPort(
+var _user$project$Messages$activate = _elm_lang$core$Native_Platform.outgoingPort(
 	'activate',
 	function (v) {
 		return v;
 	});
-var _user$project$Spelling$delete = _elm_lang$core$Native_Platform.outgoingPort(
+var _user$project$Messages$delete = _elm_lang$core$Native_Platform.outgoingPort(
 	'delete',
 	function (v) {
 		return v;
 	});
-var _user$project$Spelling$open = _elm_lang$core$Native_Platform.outgoingPort(
+var _user$project$Messages$open = _elm_lang$core$Native_Platform.outgoingPort(
 	'open',
 	function (v) {
 		return v;
 	});
-var _user$project$Spelling$logIn = _elm_lang$core$Native_Platform.outgoingPort(
+var _user$project$Messages$logIn = _elm_lang$core$Native_Platform.outgoingPort(
 	'logIn',
 	function (v) {
 		return [v._0, v._1];
 	});
+var _user$project$Messages$createUser = _elm_lang$core$Native_Platform.outgoingPort(
+	'createUser',
+	function (v) {
+		return [v._0, v._1];
+	});
+var _user$project$Messages$NoOp = {ctor: 'NoOp'};
+var _user$project$Messages$update = F2(
+	function (msg, model) {
+		var _p0 = msg;
+		switch (_p0.ctor) {
+			case 'Tabs':
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{tabs: _p0._0}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+			case 'TabsSaved':
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{savedTabs: _p0._0}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+			case 'Close':
+				return {
+					ctor: '_Tuple2',
+					_0: model,
+					_1: _user$project$Messages$close(_p0._0)
+				};
+			case 'Activate':
+				return {
+					ctor: '_Tuple2',
+					_0: model,
+					_1: _user$project$Messages$activate(_p0._0)
+				};
+			case 'Save':
+				var _p1 = _p0._0;
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{
+							tabs: A2(
+								_elm_lang$core$List$map,
+								_user$project$Messages$setTabSaved(_p1),
+								model.tabs)
+						}),
+					_1: _user$project$Messages$save(_p1)
+				};
+			case 'Delete':
+				return {
+					ctor: '_Tuple2',
+					_0: model,
+					_1: _user$project$Messages$delete(_p0._0)
+				};
+			case 'Open':
+				return {
+					ctor: '_Tuple2',
+					_0: model,
+					_1: _user$project$Messages$open(_p0._0)
+				};
+			case 'CycleUp':
+				var cmd = A3(
+					_elm_lang$core$Task$perform,
+					function (error) {
+						return _user$project$Messages$NoOp;
+					},
+					function (_p2) {
+						var _p3 = _p2;
+						return _user$project$Messages$NoOp;
+					},
+					_elm_lang$dom$Dom$focus(
+						_elm_lang$core$Basics$toString(model.tabIndex - 1)));
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{tabIndex: model.tabIndex - 1}),
+					_1: cmd
+				};
+			case 'CycleDown':
+				var cmd = A3(
+					_elm_lang$core$Task$perform,
+					function (error) {
+						return _user$project$Messages$NoOp;
+					},
+					function (_p4) {
+						var _p5 = _p4;
+						return _user$project$Messages$NoOp;
+					},
+					_elm_lang$dom$Dom$focus(
+						_elm_lang$core$Basics$toString(model.tabIndex + 1)));
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{tabIndex: model.tabIndex + 1}),
+					_1: cmd
+				};
+			case 'Focus':
+				var cmd = A3(
+					_elm_lang$core$Task$perform,
+					function (error) {
+						return _user$project$Messages$NoOp;
+					},
+					function (_p6) {
+						var _p7 = _p6;
+						return _user$project$Messages$NoOp;
+					},
+					_elm_lang$dom$Dom$focus(
+						_elm_lang$core$Basics$toString(model.tabIndex)));
+				return {ctor: '_Tuple2', _0: model, _1: cmd};
+			case 'ShowCurrent':
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{render: true}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+			case 'ShowSaved':
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{render: false}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+			case 'UpdateUserName':
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{username: _p0._0}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+			case 'UpdatePassword':
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{password: _p0._0}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+			case 'LogIn':
+				var data = {ctor: '_Tuple2', _0: model.username, _1: model.password};
+				return {
+					ctor: '_Tuple2',
+					_0: model,
+					_1: _user$project$Messages$logIn(data)
+				};
+			case 'GoogleLogIn':
+				return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
+			case 'CreateUser':
+				var data = {ctor: '_Tuple2', _0: model.username, _1: model.password};
+				return {
+					ctor: '_Tuple2',
+					_0: model,
+					_1: _user$project$Messages$createUser(data)
+				};
+			case 'SuccessLogIn':
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{logInSuccess: _p0._0}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+			case 'FailLogIn':
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{logInFail: _p0._0}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+			default:
+				return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
+		}
+	});
+var _user$project$Messages$FailLogIn = function (a) {
+	return {ctor: 'FailLogIn', _0: a};
+};
+var _user$project$Messages$SuccessLogIn = function (a) {
+	return {ctor: 'SuccessLogIn', _0: a};
+};
+var _user$project$Messages$UpdatePassword = function (a) {
+	return {ctor: 'UpdatePassword', _0: a};
+};
+var _user$project$Messages$UpdateUserName = function (a) {
+	return {ctor: 'UpdateUserName', _0: a};
+};
+var _user$project$Messages$CreateUser = {ctor: 'CreateUser'};
+var _user$project$Messages$GoogleLogIn = {ctor: 'GoogleLogIn'};
+var _user$project$Messages$LogIn = {ctor: 'LogIn'};
+var _user$project$Messages$ShowSaved = {ctor: 'ShowSaved'};
+var _user$project$Messages$ShowCurrent = {ctor: 'ShowCurrent'};
+var _user$project$Messages$Focus = function (a) {
+	return {ctor: 'Focus', _0: a};
+};
+var _user$project$Messages$Open = function (a) {
+	return {ctor: 'Open', _0: a};
+};
+var _user$project$Messages$Delete = function (a) {
+	return {ctor: 'Delete', _0: a};
+};
+var _user$project$Messages$Save = function (a) {
+	return {ctor: 'Save', _0: a};
+};
+var _user$project$Messages$CycleDown = {ctor: 'CycleDown'};
+var _user$project$Messages$CycleUp = {ctor: 'CycleUp'};
+var _user$project$Messages$Activate = function (a) {
+	return {ctor: 'Activate', _0: a};
+};
+var _user$project$Messages$Close = function (a) {
+	return {ctor: 'Close', _0: a};
+};
+var _user$project$Messages$TabsSaved = function (a) {
+	return {ctor: 'TabsSaved', _0: a};
+};
+var _user$project$Messages$Tabs = function (a) {
+	return {ctor: 'Tabs', _0: a};
+};
+
+var _user$project$Events$onKeyboardEvent = function (tab) {
+	var tagger = function (code) {
+		return (_elm_lang$core$Native_Utils.eq(code, 13) || _elm_lang$core$Native_Utils.eq(code, 37)) ? _user$project$Messages$Activate(tab.tabID) : ((_elm_lang$core$Native_Utils.eq(code, 8) || _elm_lang$core$Native_Utils.eq(code, 39)) ? _user$project$Messages$Close(tab.tabID) : ((_elm_lang$core$Native_Utils.eq(code, 38) || _elm_lang$core$Native_Utils.eq(code, 9)) ? _user$project$Messages$CycleUp : (_elm_lang$core$Native_Utils.eq(code, 40) ? _user$project$Messages$CycleDown : ((_elm_lang$core$Native_Utils.eq(code, 9) || _elm_lang$core$Native_Utils.eq(code, 83)) ? _user$project$Messages$Save(tab) : (_elm_lang$core$Native_Utils.eq(code, 48) ? _user$project$Messages$ShowSaved : (_elm_lang$core$Native_Utils.eq(code, 49) ? _user$project$Messages$ShowCurrent : _user$project$Messages$NoOp))))));
+	};
+	return A2(
+		_elm_lang$html$Html_Events$on,
+		'keydown',
+		A2(_elm_lang$core$Json_Decode$map, tagger, _elm_lang$html$Html_Events$keyCode));
+};
+
+var _user$project$Views$savedTab = function (tab) {
+	return tab.saved ? A2(
+		_elm_lang$html$Html$p,
+		_elm_lang$core$Native_List.fromArray(
+			[
+				_elm_lang$html$Html_Attributes$class('w-20 tc saved')
+			]),
+		_elm_lang$core$Native_List.fromArray(
+			[
+				_elm_lang$html$Html$text('saved')
+			])) : A2(
+		_elm_lang$html$Html$p,
+		_elm_lang$core$Native_List.fromArray(
+			[
+				_elm_lang$html$Html_Attributes$class('w-20 ms-pt tc'),
+				_elm_lang$html$Html_Events$onClick(
+				_user$project$Messages$Save(tab))
+			]),
+		_elm_lang$core$Native_List.fromArray(
+			[
+				_elm_lang$html$Html$text('save')
+			]));
+};
+var _user$project$Views$createUserView = function (model) {
+	return A2(
+		_elm_lang$html$Html$div,
+		_elm_lang$core$Native_List.fromArray(
+			[
+				_elm_lang$html$Html_Attributes$class('pa2 w-100 flex flex-column')
+			]),
+		_elm_lang$core$Native_List.fromArray(
+			[
+				A2(
+				_elm_lang$html$Html$h2,
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html_Attributes$class('pa2 tc white')
+					]),
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html$text('Create a User')
+					])),
+				A2(
+				_elm_lang$html$Html$input,
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html_Attributes$type$('text'),
+						_elm_lang$html$Html_Attributes$placeholder('UserName'),
+						_elm_lang$html$Html_Attributes$class('login-input'),
+						_elm_lang$html$Html_Events$onInput(_user$project$Messages$UpdateUserName)
+					]),
+				_elm_lang$core$Native_List.fromArray(
+					[])),
+				A2(
+				_elm_lang$html$Html$input,
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html_Attributes$type$('password'),
+						_elm_lang$html$Html_Attributes$placeholder('Password'),
+						_elm_lang$html$Html_Attributes$class('login-input'),
+						_elm_lang$html$Html_Events$onInput(_user$project$Messages$UpdatePassword)
+					]),
+				_elm_lang$core$Native_List.fromArray(
+					[])),
+				A2(
+				_elm_lang$html$Html$button,
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html_Events$onClick(_user$project$Messages$CreateUser),
+						_elm_lang$html$Html_Attributes$class('login-submit')
+					]),
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html$text('Create')
+					]))
+			]));
+};
+var _user$project$Views$login = function (model) {
+	return A2(
+		_elm_lang$html$Html$div,
+		_elm_lang$core$Native_List.fromArray(
+			[
+				_elm_lang$html$Html_Attributes$class('pa2 w-100 flex flex-column')
+			]),
+		_elm_lang$core$Native_List.fromArray(
+			[
+				A2(
+				_elm_lang$html$Html$h1,
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html_Attributes$class('pa2 tc white')
+					]),
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html$text('Please Log In')
+					])),
+				A2(
+				_elm_lang$html$Html$h2,
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html_Attributes$class('pa2 tc white login-error')
+					]),
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html$text(model.logInFail)
+					])),
+				A2(
+				_elm_lang$html$Html$input,
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html_Attributes$type$('text'),
+						_elm_lang$html$Html_Attributes$placeholder('UserName'),
+						_elm_lang$html$Html_Attributes$class('login-input'),
+						_elm_lang$html$Html_Events$onInput(_user$project$Messages$UpdateUserName)
+					]),
+				_elm_lang$core$Native_List.fromArray(
+					[])),
+				A2(
+				_elm_lang$html$Html$input,
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html_Attributes$type$('password'),
+						_elm_lang$html$Html_Attributes$placeholder('Password'),
+						_elm_lang$html$Html_Attributes$class('login-input'),
+						_elm_lang$html$Html_Events$onInput(_user$project$Messages$UpdatePassword)
+					]),
+				_elm_lang$core$Native_List.fromArray(
+					[])),
+				A2(
+				_elm_lang$html$Html$button,
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html_Events$onClick(_user$project$Messages$LogIn),
+						_elm_lang$html$Html_Attributes$class('login-submit')
+					]),
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html$text('Log In')
+					])),
+				_user$project$Views$createUserView(model),
+				A2(
+				_elm_lang$html$Html$button,
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html_Events$onClick(_user$project$Messages$GoogleLogIn),
+						_elm_lang$html$Html_Attributes$class('login-submit')
+					]),
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html$text('Google')
+					]))
+			]));
+};
+var _user$project$Views$isFirst = function (index) {
+	return _elm_lang$core$Native_Utils.eq(index, 0) ? true : false;
+};
+var _user$project$Views$toLi = function (tab) {
+	return A2(
+		_elm_lang$html$Html$div,
+		_elm_lang$core$Native_List.fromArray(
+			[
+				_user$project$Events$onKeyboardEvent(tab),
+				_elm_lang$html$Html_Attributes$tabindex(1),
+				_elm_lang$html$Html_Attributes$autofocus(
+				_user$project$Views$isFirst(tab.index)),
+				_elm_lang$html$Html_Attributes$class(
+				A2(
+					_elm_lang$core$Basics_ops['++'],
+					'tabsli hover-style focus-style',
+					tab.active ? ' active' : '')),
+				_elm_lang$html$Html_Attributes$id(
+				_elm_lang$core$Basics$toString(tab.index))
+			]),
+		_elm_lang$core$Native_List.fromArray(
+			[
+				A2(
+				_elm_lang$html$Html$li,
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html_Attributes$class('list flex flex-row pa3 w-100 items-center')
+					]),
+				_elm_lang$core$Native_List.fromArray(
+					[
+						A2(
+						_elm_lang$html$Html$img,
+						_elm_lang$core$Native_List.fromArray(
+							[
+								_elm_lang$html$Html_Attributes$src(tab.favIconUrl),
+								_elm_lang$html$Html_Attributes$height(25),
+								_elm_lang$html$Html_Attributes$width(25),
+								_elm_lang$html$Html_Attributes$class('pl2 pr2')
+							]),
+						_elm_lang$core$Native_List.fromArray(
+							[])),
+						A2(
+						_elm_lang$html$Html$div,
+						_elm_lang$core$Native_List.fromArray(
+							[
+								_elm_lang$html$Html_Attributes$class('w-60'),
+								_elm_lang$html$Html_Events$onClick(
+								_user$project$Messages$Activate(tab.tabID))
+							]),
+						_elm_lang$core$Native_List.fromArray(
+							[
+								_elm_lang$html$Html$text(tab.title)
+							])),
+						_user$project$Views$savedTab(tab),
+						A2(
+						_elm_lang$html$Html$button,
+						_elm_lang$core$Native_List.fromArray(
+							[
+								_elm_lang$html$Html_Attributes$class('w-10 tc red ms-pt btn hover-style'),
+								_elm_lang$html$Html_Events$onClick(
+								_user$project$Messages$Close(tab.tabID)),
+								_elm_lang$html$Html_Attributes$tabindex(-1)
+							]),
+						_elm_lang$core$Native_List.fromArray(
+							[
+								_elm_lang$html$Html$text('X')
+							]))
+					]))
+			]));
+};
+var _user$project$Views$tabsList = function (tabs) {
+	return A2(
+		_elm_lang$html$Html$ul,
+		_elm_lang$core$Native_List.fromArray(
+			[
+				_elm_lang$html$Html_Attributes$class('pa0 flex-column flex self-center w-100')
+			]),
+		A2(_elm_lang$core$List$map, _user$project$Views$toLi, tabs));
+};
+var _user$project$Views$toSavedLi = function (saved) {
+	return A2(
+		_elm_lang$html$Html$div,
+		_elm_lang$core$Native_List.fromArray(
+			[
+				_user$project$Events$onKeyboardEvent(saved),
+				_elm_lang$html$Html_Attributes$tabindex(1),
+				_elm_lang$html$Html_Attributes$autofocus(
+				_user$project$Views$isFirst(saved.index)),
+				_elm_lang$html$Html_Attributes$class('tabsli hover-style focus-style'),
+				_elm_lang$html$Html_Attributes$id(
+				_elm_lang$core$Basics$toString(saved.index))
+			]),
+		_elm_lang$core$Native_List.fromArray(
+			[
+				A2(
+				_elm_lang$html$Html$li,
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html_Attributes$class('list flex flex-row pa3 w-100 items-center')
+					]),
+				_elm_lang$core$Native_List.fromArray(
+					[
+						A2(
+						_elm_lang$html$Html$img,
+						_elm_lang$core$Native_List.fromArray(
+							[
+								_elm_lang$html$Html_Attributes$src(saved.favIconUrl),
+								_elm_lang$html$Html_Attributes$height(25),
+								_elm_lang$html$Html_Attributes$width(25),
+								_elm_lang$html$Html_Attributes$class('pl2 pr2')
+							]),
+						_elm_lang$core$Native_List.fromArray(
+							[])),
+						A2(
+						_elm_lang$html$Html$div,
+						_elm_lang$core$Native_List.fromArray(
+							[
+								_elm_lang$html$Html_Attributes$class('w-80'),
+								_elm_lang$html$Html_Events$onClick(
+								_user$project$Messages$Open(saved.url))
+							]),
+						_elm_lang$core$Native_List.fromArray(
+							[
+								_elm_lang$html$Html$text(saved.title)
+							])),
+						A2(
+						_elm_lang$html$Html$button,
+						_elm_lang$core$Native_List.fromArray(
+							[
+								_elm_lang$html$Html_Attributes$class('w-20 tc red ms-pt btn hover-style'),
+								_elm_lang$html$Html_Events$onClick(
+								_user$project$Messages$Delete(saved.url)),
+								_elm_lang$html$Html_Attributes$tabindex(-1)
+							]),
+						_elm_lang$core$Native_List.fromArray(
+							[
+								_elm_lang$html$Html$text('X')
+							]))
+					]))
+			]));
+};
+var _user$project$Views$savedTabsList = function (savedTabs) {
+	return A2(
+		_elm_lang$html$Html$ul,
+		_elm_lang$core$Native_List.fromArray(
+			[
+				_elm_lang$html$Html_Attributes$class('pa0 flex-column flex self-center w-100')
+			]),
+		A2(_elm_lang$core$List$map, _user$project$Views$toSavedLi, savedTabs));
+};
+var _user$project$Views$renderList = function (model) {
+	return _elm_lang$core$Native_Utils.eq(model.render, true) ? _user$project$Views$tabsList(model.tabs) : _user$project$Views$savedTabsList(model.savedTabs);
+};
+var _user$project$Views$app = function (model) {
+	return A2(
+		_elm_lang$html$Html$div,
+		_elm_lang$core$Native_List.fromArray(
+			[]),
+		_elm_lang$core$Native_List.fromArray(
+			[
+				A2(
+				_elm_lang$html$Html$div,
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html_Attributes$class('w-100 flex flex-row container self-center')
+					]),
+				_elm_lang$core$Native_List.fromArray(
+					[
+						A2(
+						_elm_lang$html$Html$div,
+						_elm_lang$core$Native_List.fromArray(
+							[
+								_elm_lang$html$Html_Attributes$class(
+								A2(
+									_elm_lang$core$Basics_ops['++'],
+									'render-tabs pa2 w-50 flex justify-center',
+									model.render ? ' active' : '')),
+								_elm_lang$html$Html_Events$onClick(_user$project$Messages$ShowCurrent)
+							]),
+						_elm_lang$core$Native_List.fromArray(
+							[
+								_elm_lang$html$Html$text('Current')
+							])),
+						A2(
+						_elm_lang$html$Html$div,
+						_elm_lang$core$Native_List.fromArray(
+							[
+								_elm_lang$html$Html_Attributes$class(
+								A2(
+									_elm_lang$core$Basics_ops['++'],
+									'render-tabs pa2 w-50 flex justify-center',
+									_elm_lang$core$Native_Utils.eq(model.render, false) ? ' active' : '')),
+								_elm_lang$html$Html_Events$onClick(_user$project$Messages$ShowSaved)
+							]),
+						_elm_lang$core$Native_List.fromArray(
+							[
+								_elm_lang$html$Html$text('Saved')
+							]))
+					])),
+				A2(
+				_elm_lang$html$Html$div,
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html_Attributes$class('w-100 flex flex-column container ')
+					]),
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_user$project$Views$renderList(model)
+					]))
+			]));
+};
+var _user$project$Views$isLoggedIn = function (model) {
+	return _elm_lang$core$String$isEmpty(model.logInSuccess) ? _user$project$Views$login(model) : _user$project$Views$app(model);
+};
+var _user$project$Views$view = function (model) {
+	return A2(
+		_elm_lang$html$Html$div,
+		_elm_lang$core$Native_List.fromArray(
+			[
+				_elm_lang$html$Html_Attributes$class('pa2 w-100 flex flex-column login-container ')
+			]),
+		_elm_lang$core$Native_List.fromArray(
+			[
+				A2(
+				_elm_lang$html$Html$div,
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html_Attributes$class('w-100 flex flex-column container ')
+					]),
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_user$project$Views$isLoggedIn(model)
+					]))
+			]));
+};
+
+var _user$project$Spelling$init = {
+	ctor: '_Tuple2',
+	_0: A9(
+		_user$project$Model$Model,
+		_elm_lang$core$Native_List.fromArray(
+			[]),
+		_elm_lang$core$Native_List.fromArray(
+			[]),
+		0,
+		true,
+		'',
+		'',
+		'',
+		'',
+		''),
+	_1: _elm_lang$core$Platform_Cmd$none
+};
 var _user$project$Spelling$initialTabs = _elm_lang$core$Native_Platform.incomingPort(
 	'initialTabs',
 	_elm_lang$core$Json_Decode$list(
@@ -8432,582 +9081,19 @@ var _user$project$Spelling$savedTabs = _elm_lang$core$Native_Platform.incomingPo
 			})));
 var _user$project$Spelling$logInSuccess = _elm_lang$core$Native_Platform.incomingPort('logInSuccess', _elm_lang$core$Json_Decode$string);
 var _user$project$Spelling$logInFail = _elm_lang$core$Native_Platform.incomingPort('logInFail', _elm_lang$core$Json_Decode$string);
-var _user$project$Spelling$TabsList = F7(
-	function (a, b, c, d, e, f, g) {
-		return {url: a, title: b, index: c, active: d, tabID: e, saved: f, favIconUrl: g};
-	});
-var _user$project$Spelling$Model = F9(
-	function (a, b, c, d, e, f, g, h, i) {
-		return {tabs: a, savedTabs: b, tabIndex: c, render: d, username: e, password: f, loggedIn: g, logInFail: h, logInSuccess: i};
-	});
-var _user$project$Spelling$init = {
-	ctor: '_Tuple2',
-	_0: A9(
-		_user$project$Spelling$Model,
-		_elm_lang$core$Native_List.fromArray(
-			[]),
-		_elm_lang$core$Native_List.fromArray(
-			[]),
-		0,
-		true,
-		'',
-		'',
-		'',
-		'',
-		''),
-	_1: _elm_lang$core$Platform_Cmd$none
-};
-var _user$project$Spelling$NoOp = {ctor: 'NoOp'};
-var _user$project$Spelling$update = F2(
-	function (msg, model) {
-		var _p0 = msg;
-		switch (_p0.ctor) {
-			case 'Tabs':
-				return {
-					ctor: '_Tuple2',
-					_0: _elm_lang$core$Native_Utils.update(
-						model,
-						{tabs: _p0._0}),
-					_1: _elm_lang$core$Platform_Cmd$none
-				};
-			case 'TabsSaved':
-				return {
-					ctor: '_Tuple2',
-					_0: _elm_lang$core$Native_Utils.update(
-						model,
-						{savedTabs: _p0._0}),
-					_1: _elm_lang$core$Platform_Cmd$none
-				};
-			case 'Close':
-				return {
-					ctor: '_Tuple2',
-					_0: model,
-					_1: _user$project$Spelling$close(_p0._0)
-				};
-			case 'Activate':
-				return {
-					ctor: '_Tuple2',
-					_0: model,
-					_1: _user$project$Spelling$activate(_p0._0)
-				};
-			case 'Save':
-				var _p1 = _p0._0;
-				return {
-					ctor: '_Tuple2',
-					_0: _elm_lang$core$Native_Utils.update(
-						model,
-						{
-							tabs: A2(
-								_elm_lang$core$List$map,
-								_user$project$Spelling$setTabSaved(_p1),
-								model.tabs)
-						}),
-					_1: _user$project$Spelling$save(_p1)
-				};
-			case 'Delete':
-				return {
-					ctor: '_Tuple2',
-					_0: model,
-					_1: _user$project$Spelling$delete(_p0._0)
-				};
-			case 'Open':
-				return {
-					ctor: '_Tuple2',
-					_0: model,
-					_1: _user$project$Spelling$open(_p0._0)
-				};
-			case 'CycleUp':
-				var cmd = A3(
-					_elm_lang$core$Task$perform,
-					function (error) {
-						return _user$project$Spelling$NoOp;
-					},
-					function (_p2) {
-						var _p3 = _p2;
-						return _user$project$Spelling$NoOp;
-					},
-					_elm_lang$dom$Dom$focus(
-						_elm_lang$core$Basics$toString(model.tabIndex - 1)));
-				return {
-					ctor: '_Tuple2',
-					_0: _elm_lang$core$Native_Utils.update(
-						model,
-						{tabIndex: model.tabIndex - 1}),
-					_1: cmd
-				};
-			case 'CycleDown':
-				var cmd = A3(
-					_elm_lang$core$Task$perform,
-					function (error) {
-						return _user$project$Spelling$NoOp;
-					},
-					function (_p4) {
-						var _p5 = _p4;
-						return _user$project$Spelling$NoOp;
-					},
-					_elm_lang$dom$Dom$focus(
-						_elm_lang$core$Basics$toString(model.tabIndex + 1)));
-				return {
-					ctor: '_Tuple2',
-					_0: _elm_lang$core$Native_Utils.update(
-						model,
-						{tabIndex: model.tabIndex + 1}),
-					_1: cmd
-				};
-			case 'Focus':
-				var cmd = A3(
-					_elm_lang$core$Task$perform,
-					function (error) {
-						return _user$project$Spelling$NoOp;
-					},
-					function (_p6) {
-						var _p7 = _p6;
-						return _user$project$Spelling$NoOp;
-					},
-					_elm_lang$dom$Dom$focus(
-						_elm_lang$core$Basics$toString(model.tabIndex)));
-				return {ctor: '_Tuple2', _0: model, _1: cmd};
-			case 'ShowCurrent':
-				return {
-					ctor: '_Tuple2',
-					_0: _elm_lang$core$Native_Utils.update(
-						model,
-						{render: true}),
-					_1: _elm_lang$core$Platform_Cmd$none
-				};
-			case 'ShowSaved':
-				return {
-					ctor: '_Tuple2',
-					_0: _elm_lang$core$Native_Utils.update(
-						model,
-						{render: false}),
-					_1: _elm_lang$core$Platform_Cmd$none
-				};
-			case 'UpdateUserName':
-				return {
-					ctor: '_Tuple2',
-					_0: _elm_lang$core$Native_Utils.update(
-						model,
-						{username: _p0._0}),
-					_1: _elm_lang$core$Platform_Cmd$none
-				};
-			case 'UpdatePassword':
-				return {
-					ctor: '_Tuple2',
-					_0: _elm_lang$core$Native_Utils.update(
-						model,
-						{password: _p0._0}),
-					_1: _elm_lang$core$Platform_Cmd$none
-				};
-			case 'LogIn':
-				var data = {ctor: '_Tuple2', _0: model.username, _1: model.password};
-				return {
-					ctor: '_Tuple2',
-					_0: model,
-					_1: _user$project$Spelling$logIn(data)
-				};
-			case 'SuccessLogIn':
-				return {
-					ctor: '_Tuple2',
-					_0: _elm_lang$core$Native_Utils.update(
-						model,
-						{logInSuccess: _p0._0}),
-					_1: _elm_lang$core$Platform_Cmd$none
-				};
-			case 'FailLogIn':
-				return {
-					ctor: '_Tuple2',
-					_0: _elm_lang$core$Native_Utils.update(
-						model,
-						{logInFail: _p0._0}),
-					_1: _elm_lang$core$Platform_Cmd$none
-				};
-			default:
-				return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
-		}
-	});
-var _user$project$Spelling$FailLogIn = function (a) {
-	return {ctor: 'FailLogIn', _0: a};
-};
-var _user$project$Spelling$SuccessLogIn = function (a) {
-	return {ctor: 'SuccessLogIn', _0: a};
-};
-var _user$project$Spelling$UpdatePassword = function (a) {
-	return {ctor: 'UpdatePassword', _0: a};
-};
-var _user$project$Spelling$UpdateUserName = function (a) {
-	return {ctor: 'UpdateUserName', _0: a};
-};
-var _user$project$Spelling$LogIn = {ctor: 'LogIn'};
-var _user$project$Spelling$login = function (model) {
-	return A2(
-		_elm_lang$html$Html$div,
-		_elm_lang$core$Native_List.fromArray(
-			[
-				_elm_lang$html$Html_Attributes$class('pa2 w-100 flex flex-column')
-			]),
-		_elm_lang$core$Native_List.fromArray(
-			[
-				A2(
-				_elm_lang$html$Html$h1,
-				_elm_lang$core$Native_List.fromArray(
-					[
-						_elm_lang$html$Html_Attributes$class('pa2 tc white')
-					]),
-				_elm_lang$core$Native_List.fromArray(
-					[
-						_elm_lang$html$Html$text('Please Log In')
-					])),
-				A2(
-				_elm_lang$html$Html$h2,
-				_elm_lang$core$Native_List.fromArray(
-					[
-						_elm_lang$html$Html_Attributes$class('pa2 tc white')
-					]),
-				_elm_lang$core$Native_List.fromArray(
-					[
-						_elm_lang$html$Html$text(model.logInFail)
-					])),
-				A2(
-				_elm_lang$html$Html$input,
-				_elm_lang$core$Native_List.fromArray(
-					[
-						_elm_lang$html$Html_Attributes$type$('text'),
-						_elm_lang$html$Html_Attributes$placeholder('UserName'),
-						_elm_lang$html$Html_Attributes$class('login-input'),
-						_elm_lang$html$Html_Events$onInput(_user$project$Spelling$UpdateUserName)
-					]),
-				_elm_lang$core$Native_List.fromArray(
-					[])),
-				A2(
-				_elm_lang$html$Html$input,
-				_elm_lang$core$Native_List.fromArray(
-					[
-						_elm_lang$html$Html_Attributes$type$('password'),
-						_elm_lang$html$Html_Attributes$placeholder('Password'),
-						_elm_lang$html$Html_Attributes$class('login-input'),
-						_elm_lang$html$Html_Events$onInput(_user$project$Spelling$UpdatePassword)
-					]),
-				_elm_lang$core$Native_List.fromArray(
-					[])),
-				A2(
-				_elm_lang$html$Html$button,
-				_elm_lang$core$Native_List.fromArray(
-					[
-						_elm_lang$html$Html_Events$onClick(_user$project$Spelling$LogIn),
-						_elm_lang$html$Html_Attributes$class('login-submit')
-					]),
-				_elm_lang$core$Native_List.fromArray(
-					[
-						_elm_lang$html$Html$text('Log In')
-					]))
-			]));
-};
-var _user$project$Spelling$ShowSaved = {ctor: 'ShowSaved'};
-var _user$project$Spelling$ShowCurrent = {ctor: 'ShowCurrent'};
-var _user$project$Spelling$Focus = function (a) {
-	return {ctor: 'Focus', _0: a};
-};
-var _user$project$Spelling$Open = function (a) {
-	return {ctor: 'Open', _0: a};
-};
-var _user$project$Spelling$Delete = function (a) {
-	return {ctor: 'Delete', _0: a};
-};
-var _user$project$Spelling$Save = function (a) {
-	return {ctor: 'Save', _0: a};
-};
-var _user$project$Spelling$savedTab = function (tab) {
-	return tab.saved ? A2(
-		_elm_lang$html$Html$p,
-		_elm_lang$core$Native_List.fromArray(
-			[
-				_elm_lang$html$Html_Attributes$class('w-20 tc saved')
-			]),
-		_elm_lang$core$Native_List.fromArray(
-			[
-				_elm_lang$html$Html$text('saved')
-			])) : A2(
-		_elm_lang$html$Html$p,
-		_elm_lang$core$Native_List.fromArray(
-			[
-				_elm_lang$html$Html_Attributes$class('w-20 ms-pt tc'),
-				_elm_lang$html$Html_Events$onClick(
-				_user$project$Spelling$Save(tab))
-			]),
-		_elm_lang$core$Native_List.fromArray(
-			[
-				_elm_lang$html$Html$text('save')
-			]));
-};
-var _user$project$Spelling$CycleDown = {ctor: 'CycleDown'};
-var _user$project$Spelling$CycleUp = {ctor: 'CycleUp'};
-var _user$project$Spelling$Activate = function (a) {
-	return {ctor: 'Activate', _0: a};
-};
-var _user$project$Spelling$Close = function (a) {
-	return {ctor: 'Close', _0: a};
-};
-var _user$project$Spelling$onKeyboardEvent = function (tab) {
-	var tagger = function (code) {
-		return (_elm_lang$core$Native_Utils.eq(code, 13) || _elm_lang$core$Native_Utils.eq(code, 37)) ? _user$project$Spelling$Activate(tab.tabID) : ((_elm_lang$core$Native_Utils.eq(code, 8) || _elm_lang$core$Native_Utils.eq(code, 39)) ? _user$project$Spelling$Close(tab.tabID) : ((_elm_lang$core$Native_Utils.eq(code, 38) || _elm_lang$core$Native_Utils.eq(code, 9)) ? _user$project$Spelling$CycleUp : (_elm_lang$core$Native_Utils.eq(code, 40) ? _user$project$Spelling$CycleDown : ((_elm_lang$core$Native_Utils.eq(code, 9) || _elm_lang$core$Native_Utils.eq(code, 83)) ? _user$project$Spelling$Save(tab) : (_elm_lang$core$Native_Utils.eq(code, 48) ? _user$project$Spelling$ShowSaved : (_elm_lang$core$Native_Utils.eq(code, 49) ? _user$project$Spelling$ShowCurrent : _user$project$Spelling$NoOp))))));
-	};
-	return A2(
-		_elm_lang$html$Html_Events$on,
-		'keydown',
-		A2(_elm_lang$core$Json_Decode$map, tagger, _elm_lang$html$Html_Events$keyCode));
-};
-var _user$project$Spelling$toSavedLi = function (saved) {
-	return A2(
-		_elm_lang$html$Html$div,
-		_elm_lang$core$Native_List.fromArray(
-			[
-				_user$project$Spelling$onKeyboardEvent(saved),
-				_elm_lang$html$Html_Attributes$tabindex(1),
-				_elm_lang$html$Html_Attributes$autofocus(
-				_user$project$Spelling$isFirst(saved.index)),
-				_elm_lang$html$Html_Attributes$class('tabsli hover-style focus-style'),
-				_elm_lang$html$Html_Attributes$id(
-				_elm_lang$core$Basics$toString(saved.index))
-			]),
-		_elm_lang$core$Native_List.fromArray(
-			[
-				A2(
-				_elm_lang$html$Html$li,
-				_elm_lang$core$Native_List.fromArray(
-					[
-						_elm_lang$html$Html_Attributes$class('list flex flex-row pa3 w-100 items-center')
-					]),
-				_elm_lang$core$Native_List.fromArray(
-					[
-						A2(
-						_elm_lang$html$Html$img,
-						_elm_lang$core$Native_List.fromArray(
-							[
-								_elm_lang$html$Html_Attributes$src(saved.favIconUrl),
-								_elm_lang$html$Html_Attributes$height(25),
-								_elm_lang$html$Html_Attributes$width(25),
-								_elm_lang$html$Html_Attributes$class('pl2 pr2')
-							]),
-						_elm_lang$core$Native_List.fromArray(
-							[])),
-						A2(
-						_elm_lang$html$Html$div,
-						_elm_lang$core$Native_List.fromArray(
-							[
-								_elm_lang$html$Html_Attributes$class('w-80'),
-								_elm_lang$html$Html_Events$onClick(
-								_user$project$Spelling$Open(saved.url))
-							]),
-						_elm_lang$core$Native_List.fromArray(
-							[
-								_elm_lang$html$Html$text(saved.title)
-							])),
-						A2(
-						_elm_lang$html$Html$button,
-						_elm_lang$core$Native_List.fromArray(
-							[
-								_elm_lang$html$Html_Attributes$class('w-20 tc red ms-pt btn hover-style'),
-								_elm_lang$html$Html_Events$onClick(
-								_user$project$Spelling$Delete(saved.url)),
-								_elm_lang$html$Html_Attributes$tabindex(-1)
-							]),
-						_elm_lang$core$Native_List.fromArray(
-							[
-								_elm_lang$html$Html$text('X')
-							]))
-					]))
-			]));
-};
-var _user$project$Spelling$savedTabsList = function (savedTabs) {
-	return A2(
-		_elm_lang$html$Html$ul,
-		_elm_lang$core$Native_List.fromArray(
-			[
-				_elm_lang$html$Html_Attributes$class('pa0 flex-column flex self-center w-100')
-			]),
-		A2(_elm_lang$core$List$map, _user$project$Spelling$toSavedLi, savedTabs));
-};
-var _user$project$Spelling$toLi = function (tab) {
-	return A2(
-		_elm_lang$html$Html$div,
-		_elm_lang$core$Native_List.fromArray(
-			[
-				_user$project$Spelling$onKeyboardEvent(tab),
-				_elm_lang$html$Html_Attributes$tabindex(1),
-				_elm_lang$html$Html_Attributes$autofocus(
-				_user$project$Spelling$isFirst(tab.index)),
-				_elm_lang$html$Html_Attributes$class(
-				A2(
-					_elm_lang$core$Basics_ops['++'],
-					'tabsli hover-style focus-style',
-					tab.active ? ' active' : '')),
-				_elm_lang$html$Html_Attributes$id(
-				_elm_lang$core$Basics$toString(tab.index))
-			]),
-		_elm_lang$core$Native_List.fromArray(
-			[
-				A2(
-				_elm_lang$html$Html$li,
-				_elm_lang$core$Native_List.fromArray(
-					[
-						_elm_lang$html$Html_Attributes$class('list flex flex-row pa3 w-100 items-center')
-					]),
-				_elm_lang$core$Native_List.fromArray(
-					[
-						A2(
-						_elm_lang$html$Html$img,
-						_elm_lang$core$Native_List.fromArray(
-							[
-								_elm_lang$html$Html_Attributes$src(tab.favIconUrl),
-								_elm_lang$html$Html_Attributes$height(25),
-								_elm_lang$html$Html_Attributes$width(25),
-								_elm_lang$html$Html_Attributes$class('pl2 pr2')
-							]),
-						_elm_lang$core$Native_List.fromArray(
-							[])),
-						A2(
-						_elm_lang$html$Html$div,
-						_elm_lang$core$Native_List.fromArray(
-							[
-								_elm_lang$html$Html_Attributes$class('w-60'),
-								_elm_lang$html$Html_Events$onClick(
-								_user$project$Spelling$Activate(tab.tabID))
-							]),
-						_elm_lang$core$Native_List.fromArray(
-							[
-								_elm_lang$html$Html$text(tab.title)
-							])),
-						_user$project$Spelling$savedTab(tab),
-						A2(
-						_elm_lang$html$Html$button,
-						_elm_lang$core$Native_List.fromArray(
-							[
-								_elm_lang$html$Html_Attributes$class('w-10 tc red ms-pt btn hover-style'),
-								_elm_lang$html$Html_Events$onClick(
-								_user$project$Spelling$Close(tab.tabID)),
-								_elm_lang$html$Html_Attributes$tabindex(-1)
-							]),
-						_elm_lang$core$Native_List.fromArray(
-							[
-								_elm_lang$html$Html$text('X')
-							]))
-					]))
-			]));
-};
-var _user$project$Spelling$tabsList = function (tabs) {
-	return A2(
-		_elm_lang$html$Html$ul,
-		_elm_lang$core$Native_List.fromArray(
-			[
-				_elm_lang$html$Html_Attributes$class('pa0 flex-column flex self-center w-100')
-			]),
-		A2(_elm_lang$core$List$map, _user$project$Spelling$toLi, tabs));
-};
-var _user$project$Spelling$renderList = function (model) {
-	return _elm_lang$core$Native_Utils.eq(model.render, true) ? _user$project$Spelling$tabsList(model.tabs) : _user$project$Spelling$savedTabsList(model.savedTabs);
-};
-var _user$project$Spelling$app = function (model) {
-	return A2(
-		_elm_lang$html$Html$div,
-		_elm_lang$core$Native_List.fromArray(
-			[]),
-		_elm_lang$core$Native_List.fromArray(
-			[
-				A2(
-				_elm_lang$html$Html$div,
-				_elm_lang$core$Native_List.fromArray(
-					[
-						_elm_lang$html$Html_Attributes$class('w-100 flex flex-row container self-center')
-					]),
-				_elm_lang$core$Native_List.fromArray(
-					[
-						A2(
-						_elm_lang$html$Html$div,
-						_elm_lang$core$Native_List.fromArray(
-							[
-								_elm_lang$html$Html_Attributes$class(
-								A2(
-									_elm_lang$core$Basics_ops['++'],
-									'render-tabs pa2 w-50 flex justify-center',
-									model.render ? ' active' : '')),
-								_elm_lang$html$Html_Events$onClick(_user$project$Spelling$ShowCurrent)
-							]),
-						_elm_lang$core$Native_List.fromArray(
-							[
-								_elm_lang$html$Html$text('Current')
-							])),
-						A2(
-						_elm_lang$html$Html$div,
-						_elm_lang$core$Native_List.fromArray(
-							[
-								_elm_lang$html$Html_Attributes$class(
-								A2(
-									_elm_lang$core$Basics_ops['++'],
-									'render-tabs pa2 w-50 flex justify-center',
-									_elm_lang$core$Native_Utils.eq(model.render, false) ? ' active' : '')),
-								_elm_lang$html$Html_Events$onClick(_user$project$Spelling$ShowSaved)
-							]),
-						_elm_lang$core$Native_List.fromArray(
-							[
-								_elm_lang$html$Html$text('Saved')
-							]))
-					])),
-				A2(
-				_elm_lang$html$Html$div,
-				_elm_lang$core$Native_List.fromArray(
-					[
-						_elm_lang$html$Html_Attributes$class('w-100 flex flex-column container ')
-					]),
-				_elm_lang$core$Native_List.fromArray(
-					[
-						_user$project$Spelling$renderList(model)
-					]))
-			]));
-};
-var _user$project$Spelling$isLoggedIn = function (model) {
-	return _elm_lang$core$String$isEmpty(model.logInSuccess) ? _user$project$Spelling$login(model) : _user$project$Spelling$app(model);
-};
-var _user$project$Spelling$view = function (model) {
-	return A2(
-		_elm_lang$html$Html$div,
-		_elm_lang$core$Native_List.fromArray(
-			[
-				_elm_lang$html$Html_Attributes$class('pa2 w-100 flex flex-column login-container ')
-			]),
-		_elm_lang$core$Native_List.fromArray(
-			[
-				A2(
-				_elm_lang$html$Html$div,
-				_elm_lang$core$Native_List.fromArray(
-					[
-						_elm_lang$html$Html_Attributes$class('w-100 flex flex-column container ')
-					]),
-				_elm_lang$core$Native_List.fromArray(
-					[
-						_user$project$Spelling$isLoggedIn(model)
-					]))
-			]));
-};
-var _user$project$Spelling$TabsSaved = function (a) {
-	return {ctor: 'TabsSaved', _0: a};
-};
-var _user$project$Spelling$Tabs = function (a) {
-	return {ctor: 'Tabs', _0: a};
-};
 var _user$project$Spelling$subscriptions = function (model) {
 	return _elm_lang$core$Platform_Sub$batch(
 		_elm_lang$core$Native_List.fromArray(
 			[
-				_user$project$Spelling$initialTabs(_user$project$Spelling$Tabs),
-				_user$project$Spelling$savedTabs(_user$project$Spelling$TabsSaved),
-				_user$project$Spelling$logInSuccess(_user$project$Spelling$SuccessLogIn),
-				_user$project$Spelling$logInFail(_user$project$Spelling$FailLogIn)
+				_user$project$Spelling$initialTabs(_user$project$Messages$Tabs),
+				_user$project$Spelling$savedTabs(_user$project$Messages$TabsSaved),
+				_user$project$Spelling$logInSuccess(_user$project$Messages$SuccessLogIn),
+				_user$project$Spelling$logInFail(_user$project$Messages$FailLogIn)
 			]));
 };
 var _user$project$Spelling$main = {
 	main: _elm_lang$html$Html_App$program(
-		{init: _user$project$Spelling$init, view: _user$project$Spelling$view, update: _user$project$Spelling$update, subscriptions: _user$project$Spelling$subscriptions})
+		{init: _user$project$Spelling$init, view: _user$project$Views$view, update: _user$project$Messages$update, subscriptions: _user$project$Spelling$subscriptions})
 };
 
 var Elm = {};

@@ -16,9 +16,11 @@ const db = firebase.database();
 const ref = db.ref("root/");
 const currentTabsRef = ref.child("currentTabs");
 const savedTabsRef = ref.child("savedTabs");
-
-
-
+// firebase.database().ref('users/' + loggedInUid)
+const userRef = db.ref("users");
+var loggedInUid;
+// const currentUserTabsRef = userRef.child("currentTabs");
+// const savedUserTabsRef = userRef.child("savedTabs");
 
 //event listener that will update elm model upon change
 savedTabsRef.on("value", function(snapshot) {
@@ -59,14 +61,37 @@ app.ports.close.subscribe(function(tab) {
       });
 });
 
+// check if user has logged in sets the uid from localStorage
+if (localStorage.loggedInUid) {
+  loggedInUid = localStorage.loggedInUid;
+  app.ports.logInSuccess.send(loggedInUid);
+  chrome.tabs.query({
+      currentWindow: true
+    }, function(data) {
+      updateState(data);
+  });
+}
+
+
+// Log in function here
 app.ports.logIn.subscribe(function(data) {
   var email = data[0];
   var password = data[1];
   firebase.auth().signInWithEmailAndPassword(email, password)
   .then(function(res){
     console.log(res.uid)
-    const dbref = db.ref(res.uid);
-    app.ports.logInSuccess.send(res.uid);
+    loggedInUid = res.uid;
+    // const dbref = db.ref(res.uid);
+
+    app.ports.logInSuccess.send(loggedInUid);
+
+    // get current open tabs
+    chrome.tabs.query({
+        currentWindow: true
+      }, function(data) {
+        updateState(data);
+    });
+
   }).catch(function(error) {
 
   console.log(error)
@@ -77,9 +102,48 @@ app.ports.logIn.subscribe(function(data) {
   console.log(data);
 });
 
+// Create User function here
+app.ports.createUser.subscribe(function(data) {
+  const email = data[0];
+  const password = data[1];
+  firebase.auth().createUserWithEmailAndPassword(email, password)
+  .then(function(res){
+    console.log(res.uid)
+    loggedInUid = String(res.uid);
+
+    const newUserRef = userRef.child(loggedInUid);
+    newUserRef.set({
+      id: loggedInUid,
+      userName: email,
+      currentTabs: {},
+      savedTabs: {}
+    });
+    const currentUserTabsRef = newUserRef.child("currentTabs");
+    const savedUserTabsRef = newUserRef.child("savedTabs");
+
+    app.ports.logInSuccess.send(loggedInUid);
+
+    chrome.tabs.query({
+        currentWindow: true
+      }, function(data) {
+        updateState(data);
+      });
+      return newUserRef;
+
+  }).catch(function(error) {
+    console.log(error)
+    var errorCode = error.code;
+    var errorMessage = error.message;
+    app.ports.logInFail.send(errorMessage);
+});
+  console.log(data);
+});
+
+
 
 // Save to firebase
 app.ports.save.subscribe(function(tab) {
+    firebase.database().ref('users/' + loggedInUid).child("savedTabs").push(tab);
     savedTabsRef.push(tab);
 });
 
@@ -114,29 +178,33 @@ app.ports.open.subscribe(function(url) {
 
 
 //Send query and to chrome, ask for tabs and send it to elm
-chrome.tabs.query({
-    currentWindow: true
-  }, function(data) {
-    updateState(data);
-  });
+// chrome.tabs.query({
+//     currentWindow: true
+//   }, function(data) {
+//     updateState(data);
+//   });
 
 
 // main update function which sends data to elm and firebase
 function updateState(data) {
-  const tabsElm = [];
-  return data.map(function(tab){
-    tabz = {
-      'url' : tab.url,
-      'title' : tab.title,
-      'index' : tab.index,
-      'active': tab.active,
-      'tabID' : tab.id,
-      'saved' : false,
-      'favIconUrl' : tab.favIconUrl ? tab.favIconUrl : '../../icons/icon48.png'
-    };
-    tabsElm.push(tabz);
-    return tabsElm;
-  }),
-  currentTabsRef.set(tabsElm),
-  app.ports.initialTabs.send(tabsElm);
+  if (loggedInUid) {
+    const tabsElm = [];
+    return data.map(function(tab){
+      tabz = {
+        'url' : tab.url,
+        'title' : tab.title,
+        'index' : tab.index,
+        'active': tab.active,
+        'tabID' : tab.id,
+        'saved' : false,
+        'favIconUrl' : tab.favIconUrl ? tab.favIconUrl : '../../icons/icon48.png'
+      };
+      tabsElm.push(tabz);
+      return tabsElm;
+    }),
+    // currentTabsRef.set(tabsElm),
+    // currentUserTabsRef.set(tabsElm),
+    firebase.database().ref('users/' + loggedInUid).child("currentTabs").set(tabsElm),
+    app.ports.initialTabs.send(tabsElm);
+  } else return;
 }

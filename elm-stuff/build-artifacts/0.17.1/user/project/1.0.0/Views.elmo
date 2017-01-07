@@ -1,0 +1,388 @@
+var _user$project$Views$savedTab = function (tab) {
+	return tab.saved ? A2(
+		_elm_lang$html$Html$p,
+		_elm_lang$core$Native_List.fromArray(
+			[
+				_elm_lang$html$Html_Attributes$class('w-20 tc saved')
+			]),
+		_elm_lang$core$Native_List.fromArray(
+			[
+				_elm_lang$html$Html$text('saved')
+			])) : A2(
+		_elm_lang$html$Html$p,
+		_elm_lang$core$Native_List.fromArray(
+			[
+				_elm_lang$html$Html_Attributes$class('w-20 ms-pt tc'),
+				_elm_lang$html$Html_Events$onClick(
+				_user$project$Messages$Save(tab))
+			]),
+		_elm_lang$core$Native_List.fromArray(
+			[
+				_elm_lang$html$Html$text('save')
+			]));
+};
+var _user$project$Views$createUserView = function (model) {
+	return A2(
+		_elm_lang$html$Html$div,
+		_elm_lang$core$Native_List.fromArray(
+			[
+				_elm_lang$html$Html_Attributes$class('pa2 w-100 flex flex-column')
+			]),
+		_elm_lang$core$Native_List.fromArray(
+			[
+				A2(
+				_elm_lang$html$Html$h2,
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html_Attributes$class('pa2 tc white')
+					]),
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html$text('Create a User')
+					])),
+				A2(
+				_elm_lang$html$Html$input,
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html_Attributes$type$('text'),
+						_elm_lang$html$Html_Attributes$placeholder('UserName'),
+						_elm_lang$html$Html_Attributes$class('login-input'),
+						_elm_lang$html$Html_Events$onInput(_user$project$Messages$UpdateUserName)
+					]),
+				_elm_lang$core$Native_List.fromArray(
+					[])),
+				A2(
+				_elm_lang$html$Html$input,
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html_Attributes$type$('password'),
+						_elm_lang$html$Html_Attributes$placeholder('Password'),
+						_elm_lang$html$Html_Attributes$class('login-input'),
+						_elm_lang$html$Html_Events$onInput(_user$project$Messages$UpdatePassword)
+					]),
+				_elm_lang$core$Native_List.fromArray(
+					[])),
+				A2(
+				_elm_lang$html$Html$button,
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html_Events$onClick(_user$project$Messages$CreateUser),
+						_elm_lang$html$Html_Attributes$class('login-submit')
+					]),
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html$text('Create')
+					]))
+			]));
+};
+var _user$project$Views$login = function (model) {
+	return A2(
+		_elm_lang$html$Html$div,
+		_elm_lang$core$Native_List.fromArray(
+			[
+				_elm_lang$html$Html_Attributes$class('pa2 w-100 flex flex-column')
+			]),
+		_elm_lang$core$Native_List.fromArray(
+			[
+				A2(
+				_elm_lang$html$Html$h1,
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html_Attributes$class('pa2 tc white')
+					]),
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html$text('Please Log In')
+					])),
+				A2(
+				_elm_lang$html$Html$h2,
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html_Attributes$class('pa2 tc white login-error')
+					]),
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html$text(model.logInFail)
+					])),
+				A2(
+				_elm_lang$html$Html$input,
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html_Attributes$type$('text'),
+						_elm_lang$html$Html_Attributes$placeholder('UserName'),
+						_elm_lang$html$Html_Attributes$class('login-input'),
+						_elm_lang$html$Html_Events$onInput(_user$project$Messages$UpdateUserName)
+					]),
+				_elm_lang$core$Native_List.fromArray(
+					[])),
+				A2(
+				_elm_lang$html$Html$input,
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html_Attributes$type$('password'),
+						_elm_lang$html$Html_Attributes$placeholder('Password'),
+						_elm_lang$html$Html_Attributes$class('login-input'),
+						_elm_lang$html$Html_Events$onInput(_user$project$Messages$UpdatePassword)
+					]),
+				_elm_lang$core$Native_List.fromArray(
+					[])),
+				A2(
+				_elm_lang$html$Html$button,
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html_Events$onClick(_user$project$Messages$LogIn),
+						_elm_lang$html$Html_Attributes$class('login-submit')
+					]),
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html$text('Log In')
+					])),
+				_user$project$Views$createUserView(model),
+				A2(
+				_elm_lang$html$Html$button,
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html_Events$onClick(_user$project$Messages$GoogleLogIn),
+						_elm_lang$html$Html_Attributes$class('login-submit')
+					]),
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html$text('Google')
+					]))
+			]));
+};
+var _user$project$Views$isFirst = function (index) {
+	return _elm_lang$core$Native_Utils.eq(index, 0) ? true : false;
+};
+var _user$project$Views$toLi = function (tab) {
+	return A2(
+		_elm_lang$html$Html$div,
+		_elm_lang$core$Native_List.fromArray(
+			[
+				_user$project$Events$onKeyboardEvent(tab),
+				_elm_lang$html$Html_Attributes$tabindex(1),
+				_elm_lang$html$Html_Attributes$autofocus(
+				_user$project$Views$isFirst(tab.index)),
+				_elm_lang$html$Html_Attributes$class(
+				A2(
+					_elm_lang$core$Basics_ops['++'],
+					'tabsli hover-style focus-style',
+					tab.active ? ' active' : '')),
+				_elm_lang$html$Html_Attributes$id(
+				_elm_lang$core$Basics$toString(tab.index))
+			]),
+		_elm_lang$core$Native_List.fromArray(
+			[
+				A2(
+				_elm_lang$html$Html$li,
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html_Attributes$class('list flex flex-row pa3 w-100 items-center')
+					]),
+				_elm_lang$core$Native_List.fromArray(
+					[
+						A2(
+						_elm_lang$html$Html$img,
+						_elm_lang$core$Native_List.fromArray(
+							[
+								_elm_lang$html$Html_Attributes$src(tab.favIconUrl),
+								_elm_lang$html$Html_Attributes$height(25),
+								_elm_lang$html$Html_Attributes$width(25),
+								_elm_lang$html$Html_Attributes$class('pl2 pr2')
+							]),
+						_elm_lang$core$Native_List.fromArray(
+							[])),
+						A2(
+						_elm_lang$html$Html$div,
+						_elm_lang$core$Native_List.fromArray(
+							[
+								_elm_lang$html$Html_Attributes$class('w-60'),
+								_elm_lang$html$Html_Events$onClick(
+								_user$project$Messages$Activate(tab.tabID))
+							]),
+						_elm_lang$core$Native_List.fromArray(
+							[
+								_elm_lang$html$Html$text(tab.title)
+							])),
+						_user$project$Views$savedTab(tab),
+						A2(
+						_elm_lang$html$Html$button,
+						_elm_lang$core$Native_List.fromArray(
+							[
+								_elm_lang$html$Html_Attributes$class('w-10 tc red ms-pt btn hover-style'),
+								_elm_lang$html$Html_Events$onClick(
+								_user$project$Messages$Close(tab.tabID)),
+								_elm_lang$html$Html_Attributes$tabindex(-1)
+							]),
+						_elm_lang$core$Native_List.fromArray(
+							[
+								_elm_lang$html$Html$text('X')
+							]))
+					]))
+			]));
+};
+var _user$project$Views$tabsList = function (tabs) {
+	return A2(
+		_elm_lang$html$Html$ul,
+		_elm_lang$core$Native_List.fromArray(
+			[
+				_elm_lang$html$Html_Attributes$class('pa0 flex-column flex self-center w-100')
+			]),
+		A2(_elm_lang$core$List$map, _user$project$Views$toLi, tabs));
+};
+var _user$project$Views$toSavedLi = function (saved) {
+	return A2(
+		_elm_lang$html$Html$div,
+		_elm_lang$core$Native_List.fromArray(
+			[
+				_user$project$Events$onKeyboardEvent(saved),
+				_elm_lang$html$Html_Attributes$tabindex(1),
+				_elm_lang$html$Html_Attributes$autofocus(
+				_user$project$Views$isFirst(saved.index)),
+				_elm_lang$html$Html_Attributes$class('tabsli hover-style focus-style'),
+				_elm_lang$html$Html_Attributes$id(
+				_elm_lang$core$Basics$toString(saved.index))
+			]),
+		_elm_lang$core$Native_List.fromArray(
+			[
+				A2(
+				_elm_lang$html$Html$li,
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html_Attributes$class('list flex flex-row pa3 w-100 items-center')
+					]),
+				_elm_lang$core$Native_List.fromArray(
+					[
+						A2(
+						_elm_lang$html$Html$img,
+						_elm_lang$core$Native_List.fromArray(
+							[
+								_elm_lang$html$Html_Attributes$src(saved.favIconUrl),
+								_elm_lang$html$Html_Attributes$height(25),
+								_elm_lang$html$Html_Attributes$width(25),
+								_elm_lang$html$Html_Attributes$class('pl2 pr2')
+							]),
+						_elm_lang$core$Native_List.fromArray(
+							[])),
+						A2(
+						_elm_lang$html$Html$div,
+						_elm_lang$core$Native_List.fromArray(
+							[
+								_elm_lang$html$Html_Attributes$class('w-80'),
+								_elm_lang$html$Html_Events$onClick(
+								_user$project$Messages$Open(saved.url))
+							]),
+						_elm_lang$core$Native_List.fromArray(
+							[
+								_elm_lang$html$Html$text(saved.title)
+							])),
+						A2(
+						_elm_lang$html$Html$button,
+						_elm_lang$core$Native_List.fromArray(
+							[
+								_elm_lang$html$Html_Attributes$class('w-20 tc red ms-pt btn hover-style'),
+								_elm_lang$html$Html_Events$onClick(
+								_user$project$Messages$Delete(saved.url)),
+								_elm_lang$html$Html_Attributes$tabindex(-1)
+							]),
+						_elm_lang$core$Native_List.fromArray(
+							[
+								_elm_lang$html$Html$text('X')
+							]))
+					]))
+			]));
+};
+var _user$project$Views$savedTabsList = function (savedTabs) {
+	return A2(
+		_elm_lang$html$Html$ul,
+		_elm_lang$core$Native_List.fromArray(
+			[
+				_elm_lang$html$Html_Attributes$class('pa0 flex-column flex self-center w-100')
+			]),
+		A2(_elm_lang$core$List$map, _user$project$Views$toSavedLi, savedTabs));
+};
+var _user$project$Views$renderList = function (model) {
+	return _elm_lang$core$Native_Utils.eq(model.render, true) ? _user$project$Views$tabsList(model.tabs) : _user$project$Views$savedTabsList(model.savedTabs);
+};
+var _user$project$Views$app = function (model) {
+	return A2(
+		_elm_lang$html$Html$div,
+		_elm_lang$core$Native_List.fromArray(
+			[]),
+		_elm_lang$core$Native_List.fromArray(
+			[
+				A2(
+				_elm_lang$html$Html$div,
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html_Attributes$class('w-100 flex flex-row container self-center')
+					]),
+				_elm_lang$core$Native_List.fromArray(
+					[
+						A2(
+						_elm_lang$html$Html$div,
+						_elm_lang$core$Native_List.fromArray(
+							[
+								_elm_lang$html$Html_Attributes$class(
+								A2(
+									_elm_lang$core$Basics_ops['++'],
+									'render-tabs pa2 w-50 flex justify-center',
+									model.render ? ' active' : '')),
+								_elm_lang$html$Html_Events$onClick(_user$project$Messages$ShowCurrent)
+							]),
+						_elm_lang$core$Native_List.fromArray(
+							[
+								_elm_lang$html$Html$text('Current')
+							])),
+						A2(
+						_elm_lang$html$Html$div,
+						_elm_lang$core$Native_List.fromArray(
+							[
+								_elm_lang$html$Html_Attributes$class(
+								A2(
+									_elm_lang$core$Basics_ops['++'],
+									'render-tabs pa2 w-50 flex justify-center',
+									_elm_lang$core$Native_Utils.eq(model.render, false) ? ' active' : '')),
+								_elm_lang$html$Html_Events$onClick(_user$project$Messages$ShowSaved)
+							]),
+						_elm_lang$core$Native_List.fromArray(
+							[
+								_elm_lang$html$Html$text('Saved')
+							]))
+					])),
+				A2(
+				_elm_lang$html$Html$div,
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html_Attributes$class('w-100 flex flex-column container ')
+					]),
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_user$project$Views$renderList(model)
+					]))
+			]));
+};
+var _user$project$Views$isLoggedIn = function (model) {
+	return _elm_lang$core$String$isEmpty(model.logInSuccess) ? _user$project$Views$login(model) : _user$project$Views$app(model);
+};
+var _user$project$Views$view = function (model) {
+	return A2(
+		_elm_lang$html$Html$div,
+		_elm_lang$core$Native_List.fromArray(
+			[
+				_elm_lang$html$Html_Attributes$class('pa2 w-100 flex flex-column login-container ')
+			]),
+		_elm_lang$core$Native_List.fromArray(
+			[
+				A2(
+				_elm_lang$html$Html$div,
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html_Attributes$class('w-100 flex flex-column container ')
+					]),
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_user$project$Views$isLoggedIn(model)
+					]))
+			]));
+};

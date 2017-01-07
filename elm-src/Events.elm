@@ -1,8 +1,11 @@
 module Events exposing (onKeyboardEvent)
 
+import Html exposing (..)
+import Html.Events exposing (..)
 import Json.Decode exposing (..)
-import Spelling exposing (..)
 import Messages exposing (..)
+import Model exposing (..)
+
 
 onKeyboardEvent: TabsList -> Attribute Msg
 onKeyboardEvent tab =
