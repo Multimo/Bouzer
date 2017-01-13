@@ -55,6 +55,7 @@ font-family: 'Raleway', sans-serif;
   color: #fff;
   transition: all .3s;
   font-size: 1.5em;
+  cursor: pointer;./
 }
 
 .saved {
@@ -125,5 +126,5 @@ font-family: 'Raleway', sans-serif;
 }
 
 .login-error {
-  
+
 }

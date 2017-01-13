@@ -8732,18 +8732,7 @@ var _user$project$Views$login = function (model) {
 					[
 						_elm_lang$html$Html$text('Log In')
 					])),
-				_user$project$Views$createUserView(model),
-				A2(
-				_elm_lang$html$Html$button,
-				_elm_lang$core$Native_List.fromArray(
-					[
-						_elm_lang$html$Html_Events$onClick(_user$project$Messages$GoogleLogIn),
-						_elm_lang$html$Html_Attributes$class('login-submit')
-					]),
-				_elm_lang$core$Native_List.fromArray(
-					[
-						_elm_lang$html$Html$text('Google')
-					]))
+				_user$project$Views$createUserView(model)
 			]));
 };
 var _user$project$Views$isFirst = function (index) {

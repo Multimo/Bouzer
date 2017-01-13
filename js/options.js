@@ -19,23 +19,7 @@ const savedTabsRef = ref.child("savedTabs");
 // firebase.database().ref('users/' + loggedInUid)
 const userRef = db.ref("users");
 var loggedInUid;
-// const currentUserTabsRef = userRef.child("currentTabs");
-// const savedUserTabsRef = userRef.child("savedTabs");
-
-//event listener that will update elm model upon change
-savedTabsRef.on("value", function(snapshot) {
-  const savedObj = snapshot.val();
-  const savedArr = [];
-  for (let key of Object.keys(savedObj)) {
-    const val = savedObj[key];
-    val.fireRef = key;
-    savedArr.push(val)
-  }
-  app.ports.savedTabs.send(savedArr);
-}, function (errorObject) {
-  console.log("The read failed: " + errorObject.code);
-});
-
+var loggedInUidRef;
 
 
 function handleUpdated(tabId, changeInfo, tabInfo) {
@@ -64,11 +48,26 @@ app.ports.close.subscribe(function(tab) {
 // check if user has logged in sets the uid from localStorage
 if (localStorage.loggedInUid) {
   loggedInUid = localStorage.loggedInUid;
+
   app.ports.logInSuccess.send(loggedInUid);
   chrome.tabs.query({
       currentWindow: true
     }, function(data) {
       updateState(data);
+  });
+  loggedInSavedRef = firebase.database().ref('users/' + loggedInUid).child("savedTabs");
+  //event listener that will update elm model upon change
+  loggedInSavedRef.on("value", function(snapshot) {
+    const savedObj = snapshot.val();
+    const savedArr = [];
+    for (let key of Object.keys(savedObj)) {
+      const val = savedObj[key];
+      val.fireRef = key;
+      savedArr.push(val)
+    }
+    app.ports.savedTabs.send(savedArr);
+  }, function (errorObject) {
+    console.log("The read failed: " + errorObject.code);
   });
 }
 
@@ -143,8 +142,7 @@ app.ports.createUser.subscribe(function(data) {
 
 // Save to firebase
 app.ports.save.subscribe(function(tab) {
-    firebase.database().ref('users/' + loggedInUid).child("savedTabs").push(tab);
-    savedTabsRef.push(tab);
+    loggedInSavedRef.push(tab);
 });
 
 app.ports.activate.subscribe(function(tab) {
@@ -160,8 +158,8 @@ app.ports.activate.subscribe(function(tab) {
 
 // removes tab from saved list
 app.ports.delete.subscribe(function(url) {
-    savedTabsRef.orderByChild('url').equalTo(url).on('child_added', function(snapshot) {
-        savedTabsRef.child(snapshot.key).remove().then(function(){
+      loggedInSavedRef.orderByChild('url').equalTo(url).on('child_added', function(snapshot) {
+        loggedInSavedRef.child(snapshot.key).remove().then(function(){
             // console.log("Remove succeeded.")
           }).catch(function(error) {
             // console.log("Remove failed: " + error.message)
@@ -175,14 +173,6 @@ app.ports.open.subscribe(function(url) {
         updateState(data);
     });
 });
-
-
-//Send query and to chrome, ask for tabs and send it to elm
-// chrome.tabs.query({
-//     currentWindow: true
-//   }, function(data) {
-//     updateState(data);
-//   });
 
 
 // main update function which sends data to elm and firebase
@@ -202,8 +192,6 @@ function updateState(data) {
       tabsElm.push(tabz);
       return tabsElm;
     }),
-    // currentTabsRef.set(tabsElm),
-    // currentUserTabsRef.set(tabsElm),
     firebase.database().ref('users/' + loggedInUid).child("currentTabs").set(tabsElm),
     app.ports.initialTabs.send(tabsElm);
   } else return;

@@ -26,7 +26,6 @@ isLoggedIn model =
   ( if String.isEmpty model.logInSuccess then login model else app model )
 
 
-
 -- root view component
 view : Model -> Html Msg
 view model =
@@ -44,9 +43,8 @@ login model =
     , input [ type' "text", placeholder "UserName", class "login-input", onInput UpdateUserName ] []
     , input [ type' "password", placeholder "Password", class "login-input", onInput UpdatePassword ] []
     , button [ onClick ( LogIn ), class "login-submit" ] [ text "Log In" ]
-    -- , h2 [ class "pa2 tc white", onClick ( ShowCreateUserView ) ] [text "Create a User"]
+    , h2 [ class "pa2 tc white", onClick ( ShowCreateUserView ) ] [text "Create a User"]
     , createUserView model
-    , button [ onClick ( GoogleLogIn ), class "login-submit" ] [ text "Google" ]
   ]
 
   -- Create User view
