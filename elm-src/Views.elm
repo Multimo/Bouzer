@@ -9,7 +9,7 @@ import Html.Attributes exposing (..)
 import Html.Events exposing (..)
 
 
--- VIEW
+-- VIEW display functions
 isFirst: number -> Bool
 isFirst index =
     if index == 0 then
@@ -43,7 +43,7 @@ login model =
     , input [ type' "text", placeholder "UserName", class "login-input", onInput UpdateUserName ] []
     , input [ type' "password", placeholder "Password", class "login-input", onInput UpdatePassword ] []
     , button [ onClick ( LogIn ), class "login-submit" ] [ text "Log In" ]
-    , h2 [ class "pa2 tc white", onClick ( ShowCreateUserView ) ] [text "Create a User"]
+    -- , h2 [ class "pa2 tc white", onClick ( ShowCreateUserView ) ] [text "Create a User"]
     , createUserView model
   ]
 
@@ -75,8 +75,11 @@ app model =
         , onClick ShowSaved ]  [ text "Saved" ]
       ]
     , div [ class "w-100 flex flex-column container " ]  [ renderList model ]
+    , div [ class "w-100 flex flex-column container " ]  [ logOut ]
   ]
 
+logOut: Html Msg
+logOut = h3 [ class "w-20 tc white pa2 mb2 flex self-center justify-center", onClick LogOut  ]  [ text "Log Out" ]
 
 -- Active tabs view below
 tabsList : List TabsList -> Html Msg

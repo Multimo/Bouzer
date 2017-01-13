@@ -8361,6 +8361,11 @@ var _user$project$Messages$createUser = _elm_lang$core$Native_Platform.outgoingP
 	function (v) {
 		return [v._0, v._1];
 	});
+var _user$project$Messages$logOut = _elm_lang$core$Native_Platform.outgoingPort(
+	'logOut',
+	function (v) {
+		return [v._0, v._1];
+	});
 var _user$project$Messages$NoOp = {ctor: 'NoOp'};
 var _user$project$Messages$update = F2(
 	function (msg, model) {
@@ -8510,6 +8515,15 @@ var _user$project$Messages$update = F2(
 					_0: model,
 					_1: _user$project$Messages$logIn(data)
 				};
+			case 'LogOut':
+				var data = {ctor: '_Tuple2', _0: model.username, _1: model.password};
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{logInSuccess: ''}),
+					_1: _user$project$Messages$logOut(data)
+				};
 			case 'GoogleLogIn':
 				return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
 			case 'CreateUser':
@@ -8553,6 +8567,7 @@ var _user$project$Messages$UpdateUserName = function (a) {
 };
 var _user$project$Messages$CreateUser = {ctor: 'CreateUser'};
 var _user$project$Messages$GoogleLogIn = {ctor: 'GoogleLogIn'};
+var _user$project$Messages$LogOut = {ctor: 'LogOut'};
 var _user$project$Messages$LogIn = {ctor: 'LogIn'};
 var _user$project$Messages$ShowSaved = {ctor: 'ShowSaved'};
 var _user$project$Messages$ShowCurrent = {ctor: 'ShowCurrent'};
@@ -8616,6 +8631,17 @@ var _user$project$Views$savedTab = function (tab) {
 				_elm_lang$html$Html$text('save')
 			]));
 };
+var _user$project$Views$logOut = A2(
+	_elm_lang$html$Html$h3,
+	_elm_lang$core$Native_List.fromArray(
+		[
+			_elm_lang$html$Html_Attributes$class('w-20 tc white pa2 mb2 flex self-center justify-center'),
+			_elm_lang$html$Html_Events$onClick(_user$project$Messages$LogOut)
+		]),
+	_elm_lang$core$Native_List.fromArray(
+		[
+			_elm_lang$html$Html$text('Log Out')
+		]));
 var _user$project$Views$createUserView = function (model) {
 	return A2(
 		_elm_lang$html$Html$div,
@@ -8943,7 +8969,15 @@ var _user$project$Views$app = function (model) {
 				_elm_lang$core$Native_List.fromArray(
 					[
 						_user$project$Views$renderList(model)
-					]))
+					])),
+				A2(
+				_elm_lang$html$Html$div,
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html_Attributes$class('w-100 flex flex-column container ')
+					]),
+				_elm_lang$core$Native_List.fromArray(
+					[_user$project$Views$logOut]))
 			]));
 };
 var _user$project$Views$isLoggedIn = function (model) {

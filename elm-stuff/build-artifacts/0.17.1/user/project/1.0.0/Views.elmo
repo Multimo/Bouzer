@@ -21,6 +21,17 @@ var _user$project$Views$savedTab = function (tab) {
 				_elm_lang$html$Html$text('save')
 			]));
 };
+var _user$project$Views$logOut = A2(
+	_elm_lang$html$Html$h3,
+	_elm_lang$core$Native_List.fromArray(
+		[
+			_elm_lang$html$Html_Attributes$class('w-20 tc white pa2 mb2 flex self-center justify-center'),
+			_elm_lang$html$Html_Events$onClick(_user$project$Messages$LogOut)
+		]),
+	_elm_lang$core$Native_List.fromArray(
+		[
+			_elm_lang$html$Html$text('Log Out')
+		]));
 var _user$project$Views$createUserView = function (model) {
 	return A2(
 		_elm_lang$html$Html$div,
@@ -348,7 +359,15 @@ var _user$project$Views$app = function (model) {
 				_elm_lang$core$Native_List.fromArray(
 					[
 						_user$project$Views$renderList(model)
-					]))
+					])),
+				A2(
+				_elm_lang$html$Html$div,
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html_Attributes$class('w-100 flex flex-column container ')
+					]),
+				_elm_lang$core$Native_List.fromArray(
+					[_user$project$Views$logOut]))
 			]));
 };
 var _user$project$Views$isLoggedIn = function (model) {

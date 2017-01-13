@@ -19,6 +19,7 @@ type Msg
   | ShowCurrent
   | ShowSaved
   | LogIn
+  | LogOut
   | GoogleLogIn
   | CreateUser
   | UpdateUserName String
@@ -34,6 +35,7 @@ port delete : String -> Cmd msg
 port open : String -> Cmd msg
 port logIn : (String, String) -> Cmd msg
 port createUser : (String, String) -> Cmd msg
+port logOut :  (String, String) -> Cmd msg
 
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
@@ -106,6 +108,12 @@ update msg model =
             data = (model.username, model.password)
         in
       (model, logIn data )
+
+    LogOut ->
+        let
+            data = (model.username, model.password)
+        in
+      ({ model | logInSuccess = "" }, logOut data )
 
     GoogleLogIn ->
       (model, Cmd.none)

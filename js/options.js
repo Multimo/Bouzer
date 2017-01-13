@@ -22,6 +22,28 @@ var loggedInUid;
 var loggedInUidRef;
 
 
+// main update function which sends data to elm and firebase
+function updateState(data) {
+  if (loggedInUid) {
+    const tabsElm = [];
+    return data.map(function(tab){
+      tabz = {
+        'url' : tab.url,
+        'title' : tab.title,
+        'index' : tab.index,
+        'active': tab.active,
+        'tabID' : tab.id,
+        'saved' : false,
+        'favIconUrl' : tab.favIconUrl ? tab.favIconUrl : '../../icons/icon48.png'
+      };
+      tabsElm.push(tabz);
+      return tabsElm;
+    }),
+    firebase.database().ref('users/' + loggedInUid).child("currentTabs").set(tabsElm),
+    app.ports.initialTabs.send(tabsElm);
+  } else return;
+}
+
 function handleUpdated(tabId, changeInfo, tabInfo) {
   chrome.tabs.query({
       currentWindow: true
@@ -34,17 +56,6 @@ chrome.tabs.onUpdated.addListener(handleUpdated);
 chrome.tabs.onRemoved.addListener(handleUpdated);
 chrome.tabs.onCreated.addListener(handleUpdated);
 
-app.ports.close.subscribe(function(tab) {
-    // close tab here
-    chrome.tabs.remove(tab, function() {});
-    // send back new state here
-    chrome.tabs.query({
-        currentWindow: true
-      }, function(data) {
-        updateState(data);
-      });
-});
-
 // check if user has logged in sets the uid from localStorage
 if (localStorage.loggedInUid) {
   loggedInUid = localStorage.loggedInUid;
@@ -55,16 +66,20 @@ if (localStorage.loggedInUid) {
     }, function(data) {
       updateState(data);
   });
-  loggedInSavedRef = firebase.database().ref('users/' + loggedInUid).child("savedTabs");
+
   //event listener that will update elm model upon change
+  loggedInSavedRef = firebase.database().ref('users/' + loggedInUid).child("savedTabs");
   loggedInSavedRef.on("value", function(snapshot) {
     const savedObj = snapshot.val();
     const savedArr = [];
-    for (let key of Object.keys(savedObj)) {
-      const val = savedObj[key];
-      val.fireRef = key;
-      savedArr.push(val)
+    if (savedObj) {
+      for (let key of Object.keys(savedObj)) {
+        const val = savedObj[key];
+        val.fireRef = key;
+        savedArr.push(val)
+      }
     }
+
     app.ports.savedTabs.send(savedArr);
   }, function (errorObject) {
     console.log("The read failed: " + errorObject.code);
@@ -81,7 +96,7 @@ app.ports.logIn.subscribe(function(data) {
     console.log(res.uid)
     loggedInUid = res.uid;
     // const dbref = db.ref(res.uid);
-
+    localStorage.loggedInUid = loggedInUid;
     app.ports.logInSuccess.send(loggedInUid);
 
     // get current open tabs
@@ -100,6 +115,12 @@ app.ports.logIn.subscribe(function(data) {
 });
   console.log(data);
 });
+
+// Log Out function here
+app.ports.logOut.subscribe(function(data) {
+  localStorage.loggedInUid = "";
+});
+
 
 // Create User function here
 app.ports.createUser.subscribe(function(data) {
@@ -120,6 +141,7 @@ app.ports.createUser.subscribe(function(data) {
     const currentUserTabsRef = newUserRef.child("currentTabs");
     const savedUserTabsRef = newUserRef.child("savedTabs");
 
+    localStorage.loggedInUid = loggedInUid;
     app.ports.logInSuccess.send(loggedInUid);
 
     chrome.tabs.query({
@@ -174,25 +196,14 @@ app.ports.open.subscribe(function(url) {
     });
 });
 
-
-// main update function which sends data to elm and firebase
-function updateState(data) {
-  if (loggedInUid) {
-    const tabsElm = [];
-    return data.map(function(tab){
-      tabz = {
-        'url' : tab.url,
-        'title' : tab.title,
-        'index' : tab.index,
-        'active': tab.active,
-        'tabID' : tab.id,
-        'saved' : false,
-        'favIconUrl' : tab.favIconUrl ? tab.favIconUrl : '../../icons/icon48.png'
-      };
-      tabsElm.push(tabz);
-      return tabsElm;
-    }),
-    firebase.database().ref('users/' + loggedInUid).child("currentTabs").set(tabsElm),
-    app.ports.initialTabs.send(tabsElm);
-  } else return;
-}
+// port to close tabs
+app.ports.close.subscribe(function(tab) {
+    // close tab here
+    chrome.tabs.remove(tab, function() {});
+    // send back new state here
+    chrome.tabs.query({
+        currentWindow: true
+      }, function(data) {
+        updateState(data);
+      });
+});
