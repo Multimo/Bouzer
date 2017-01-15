@@ -8366,6 +8366,11 @@ var _user$project$Messages$logOut = _elm_lang$core$Native_Platform.outgoingPort(
 	function (v) {
 		return [v._0, v._1];
 	});
+var _user$project$Messages$passwordReset = _elm_lang$core$Native_Platform.outgoingPort(
+	'passwordReset',
+	function (v) {
+		return v;
+	});
 var _user$project$Messages$NoOp = {ctor: 'NoOp'};
 var _user$project$Messages$update = F2(
 	function (msg, model) {
@@ -8526,6 +8531,12 @@ var _user$project$Messages$update = F2(
 				};
 			case 'GoogleLogIn':
 				return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
+			case 'ResetPassword':
+				return {
+					ctor: '_Tuple2',
+					_0: model,
+					_1: _user$project$Messages$passwordReset(_p0._0)
+				};
 			case 'CreateUser':
 				var data = {ctor: '_Tuple2', _0: model.username, _1: model.password};
 				return {
@@ -8567,6 +8578,9 @@ var _user$project$Messages$UpdateUserName = function (a) {
 };
 var _user$project$Messages$CreateUser = {ctor: 'CreateUser'};
 var _user$project$Messages$GoogleLogIn = {ctor: 'GoogleLogIn'};
+var _user$project$Messages$ResetPassword = function (a) {
+	return {ctor: 'ResetPassword', _0: a};
+};
 var _user$project$Messages$LogOut = {ctor: 'LogOut'};
 var _user$project$Messages$LogIn = {ctor: 'LogIn'};
 var _user$project$Messages$ShowSaved = {ctor: 'ShowSaved'};
@@ -8642,6 +8656,50 @@ var _user$project$Views$logOut = A2(
 		[
 			_elm_lang$html$Html$text('Log Out')
 		]));
+var _user$project$Views$passwordResetView = function (email) {
+	return A2(
+		_elm_lang$html$Html$div,
+		_elm_lang$core$Native_List.fromArray(
+			[
+				_elm_lang$html$Html_Attributes$class('pa2 w-100 flex flex-column')
+			]),
+		_elm_lang$core$Native_List.fromArray(
+			[
+				A2(
+				_elm_lang$html$Html$h2,
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html_Attributes$class('pa2 tc white')
+					]),
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html$text('Reset Password')
+					])),
+				A2(
+				_elm_lang$html$Html$input,
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html_Attributes$type$('text'),
+						_elm_lang$html$Html_Attributes$placeholder('Email'),
+						_elm_lang$html$Html_Attributes$class('login-input'),
+						_elm_lang$html$Html_Events$onInput(_user$project$Messages$UpdateUserName)
+					]),
+				_elm_lang$core$Native_List.fromArray(
+					[])),
+				A2(
+				_elm_lang$html$Html$button,
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html_Events$onClick(
+						_user$project$Messages$ResetPassword(email)),
+						_elm_lang$html$Html_Attributes$class('login-submit')
+					]),
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html$text('Reset')
+					]))
+			]));
+};
 var _user$project$Views$createUserView = function (model) {
 	return A2(
 		_elm_lang$html$Html$div,
@@ -8666,7 +8724,7 @@ var _user$project$Views$createUserView = function (model) {
 				_elm_lang$core$Native_List.fromArray(
 					[
 						_elm_lang$html$Html_Attributes$type$('text'),
-						_elm_lang$html$Html_Attributes$placeholder('UserName'),
+						_elm_lang$html$Html_Attributes$placeholder('Email'),
 						_elm_lang$html$Html_Attributes$class('login-input'),
 						_elm_lang$html$Html_Events$onInput(_user$project$Messages$UpdateUserName)
 					]),
@@ -8719,7 +8777,7 @@ var _user$project$Views$login = function (model) {
 				_elm_lang$html$Html$h2,
 				_elm_lang$core$Native_List.fromArray(
 					[
-						_elm_lang$html$Html_Attributes$class('pa2 tc white login-error')
+						_elm_lang$html$Html_Attributes$class('tc white login-error')
 					]),
 				_elm_lang$core$Native_List.fromArray(
 					[
@@ -8730,7 +8788,7 @@ var _user$project$Views$login = function (model) {
 				_elm_lang$core$Native_List.fromArray(
 					[
 						_elm_lang$html$Html_Attributes$type$('text'),
-						_elm_lang$html$Html_Attributes$placeholder('UserName'),
+						_elm_lang$html$Html_Attributes$placeholder('Email'),
 						_elm_lang$html$Html_Attributes$class('login-input'),
 						_elm_lang$html$Html_Events$onInput(_user$project$Messages$UpdateUserName)
 					]),
@@ -8758,7 +8816,8 @@ var _user$project$Views$login = function (model) {
 					[
 						_elm_lang$html$Html$text('Log In')
 					])),
-				_user$project$Views$createUserView(model)
+				_user$project$Views$createUserView(model),
+				_user$project$Views$passwordResetView(model.username)
 			]));
 };
 var _user$project$Views$isFirst = function (index) {

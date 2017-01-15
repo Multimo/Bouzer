@@ -44,6 +44,11 @@ var _user$project$Messages$logOut = _elm_lang$core$Native_Platform.outgoingPort(
 	function (v) {
 		return [v._0, v._1];
 	});
+var _user$project$Messages$passwordReset = _elm_lang$core$Native_Platform.outgoingPort(
+	'passwordReset',
+	function (v) {
+		return v;
+	});
 var _user$project$Messages$NoOp = {ctor: 'NoOp'};
 var _user$project$Messages$update = F2(
 	function (msg, model) {
@@ -204,6 +209,12 @@ var _user$project$Messages$update = F2(
 				};
 			case 'GoogleLogIn':
 				return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
+			case 'ResetPassword':
+				return {
+					ctor: '_Tuple2',
+					_0: model,
+					_1: _user$project$Messages$passwordReset(_p0._0)
+				};
 			case 'CreateUser':
 				var data = {ctor: '_Tuple2', _0: model.username, _1: model.password};
 				return {
@@ -245,6 +256,9 @@ var _user$project$Messages$UpdateUserName = function (a) {
 };
 var _user$project$Messages$CreateUser = {ctor: 'CreateUser'};
 var _user$project$Messages$GoogleLogIn = {ctor: 'GoogleLogIn'};
+var _user$project$Messages$ResetPassword = function (a) {
+	return {ctor: 'ResetPassword', _0: a};
+};
 var _user$project$Messages$LogOut = {ctor: 'LogOut'};
 var _user$project$Messages$LogIn = {ctor: 'LogIn'};
 var _user$project$Messages$ShowSaved = {ctor: 'ShowSaved'};

@@ -9,7 +9,7 @@ import Html.Attributes exposing (..)
 import Html.Events exposing (..)
 
 
--- VIEW display functions
+-- VIEW display function
 isFirst: number -> Bool
 isFirst index =
     if index == 0 then
@@ -39,12 +39,12 @@ login: Model -> Html Msg
 login model =
   div [ class "pa2 w-100 flex flex-column" ]
   [ h1 [ class "pa2 tc white" ] [ text "Please Log In" ]
-    , h2 [ class "pa2 tc white login-error" ] [ text model.logInFail ]
-    , input [ type' "text", placeholder "UserName", class "login-input", onInput UpdateUserName ] []
+    , h2 [ class "tc white login-error" ] [ text model.logInFail ]
+    , input [ type' "text", placeholder "Email", class "login-input", onInput UpdateUserName ] []
     , input [ type' "password", placeholder "Password", class "login-input", onInput UpdatePassword ] []
     , button [ onClick ( LogIn ), class "login-submit" ] [ text "Log In" ]
-    -- , h2 [ class "pa2 tc white", onClick ( ShowCreateUserView ) ] [text "Create a User"]
     , createUserView model
+    , passwordResetView model.username
   ]
 
   -- Create User view
@@ -52,11 +52,18 @@ createUserView: Model -> Html Msg
 createUserView model =
     div [ class "pa2 w-100 flex flex-column" ]
     [ h2 [ class "pa2 tc white" ] [ text "Create a User" ]
-      , input [ type' "text", placeholder "UserName", class "login-input", onInput UpdateUserName ] []
+      , input [ type' "text", placeholder "Email", class "login-input", onInput UpdateUserName ] []
       , input [ type' "password", placeholder "Password", class "login-input", onInput UpdatePassword ] []
       , button [ onClick ( CreateUser ), class "login-submit" ] [ text "Create" ]
   ]
 
+passwordResetView: String -> Html Msg
+passwordResetView email =
+  div [ class "pa2 w-100 flex flex-column"] [
+   h2 [ class "pa2 tc white"] [text "Reset Password"]
+   , input [ type' "text", placeholder "Email", class "login-input", onInput UpdateUserName ] []
+   , button [ onClick ( ResetPassword email ), class "login-submit" ] [ text "Reset" ]
+  ]
 
 --   -- Login error message
 -- loginError: Model -> Html Msg

@@ -20,6 +20,7 @@ type Msg
   | ShowSaved
   | LogIn
   | LogOut
+  | ResetPassword String
   | GoogleLogIn
   | CreateUser
   | UpdateUserName String
@@ -36,6 +37,7 @@ port open : String -> Cmd msg
 port logIn : (String, String) -> Cmd msg
 port createUser : (String, String) -> Cmd msg
 port logOut :  (String, String) -> Cmd msg
+port passwordReset : (String) -> Cmd msg
 
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
@@ -117,6 +119,9 @@ update msg model =
 
     GoogleLogIn ->
       (model, Cmd.none)
+
+    ResetPassword email ->
+      (model, passwordReset email)
 
     CreateUser ->
         let

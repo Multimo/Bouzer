@@ -68,7 +68,12 @@ if (localStorage.loggedInUid) {
       updateState(data);
   });
 
-  //event listener that will update elm model upon change
+  savedTabs();
+}
+
+// saved tabs listener etc.
+//event listener that will update elm model upon change
+function savedTabs() {
   loggedInSavedRef = firebase.database().ref('users/' + loggedInUid).child("savedTabs");
   loggedInSavedRef.on("value", function(snapshot) {
     const savedObj = snapshot.val();
@@ -80,12 +85,12 @@ if (localStorage.loggedInUid) {
         savedArr.push(val)
       }
     }
-
     app.ports.savedTabs.send(savedArr);
-  }, function (errorObject) {
-    console.log("The read failed: " + errorObject.code);
-  });
+    }, function (errorObject) {
+      console.log("The read failed: " + errorObject.code);
+    });
 }
+
 
 
 // Log in function here
@@ -144,7 +149,10 @@ app.ports.createUser.subscribe(function(data) {
       savedTabs: {}
     });
     const currentUserTabsRef = newUserRef.child("currentTabs");
-    const savedUserTabsRef = newUserRef.child("savedTabs");
+
+    savedTabs();
+    console.log("hi");
+    console.log(loggedInSavedRef);
 
     localStorage.loggedInUid = loggedInUid;
     app.ports.logInSuccess.send(loggedInUid);
@@ -167,15 +175,12 @@ app.ports.createUser.subscribe(function(data) {
 
 // Save to firebase
 app.ports.passwordReset.subscribe(function(email) {
-  if (email) {
-    emailAddress = auth.currentUser;
-  }
-  console.log(auth.currentUser)
-  // auth.sendPasswordResetEmail(emailAddress).then(function() {
-  //   // Email sent.
-  // }, function(error) {
-  //   // An error happened.
-  // });
+  console.log(email);
+  auth.sendPasswordResetEmail(email).then(function() {
+      app.ports.logInFail.send("Email Sent!");
+  }, function(error) {
+    // An error happened.
+  });
 });
 
 
