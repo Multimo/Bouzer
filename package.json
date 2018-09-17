@@ -5,7 +5,8 @@
   "main": "elm.js",
   "dependencies": {
     "chokidar-cli": "^1.2.0",
-    "elm": "^0.17.1",
+    "elm": "^0.19.0",
+    "elm-format": "^0.8.0",
     "elm-live": "^2.6.0",
     "tachyons": "^4.5.3"
   },
@@ -13,6 +14,7 @@
     "tachyons-flexbox": "^2.0.1"
   },
   "scripts": {
+    "start": "elm make elm-src/Spelling.elm",
     "watch": "chokidar '**/*.elm' -c 'elm make elm-src/Spelling.elm --warn --output='js/spelling.js'"
   },
   "repository": {

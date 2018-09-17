@@ -18,7 +18,6 @@
 port module Main exposing (..)
 
 import Html exposing (..)
-import Html.App as App
 import Html.Events exposing (onInput, onClick)
 import Html.Attributes exposing (..)
 

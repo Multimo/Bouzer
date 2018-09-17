@@ -1,8 +1,0 @@
-var _user$project$Model$TabsList = F7(
-	function (a, b, c, d, e, f, g) {
-		return {url: a, title: b, index: c, active: d, tabID: e, saved: f, favIconUrl: g};
-	});
-var _user$project$Model$Model = F9(
-	function (a, b, c, d, e, f, g, h, i) {
-		return {tabs: a, savedTabs: b, tabIndex: c, render: d, username: e, password: f, loggedIn: g, logInFail: h, logInSuccess: i};
-	});

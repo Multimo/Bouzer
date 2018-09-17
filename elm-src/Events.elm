@@ -7,25 +7,32 @@ import Messages exposing (..)
 import Model exposing (..)
 
 
-onKeyboardEvent: TabsList -> Attribute Msg
+onKeyboardEvent : TabsList -> Attribute Msg
 onKeyboardEvent tab =
     let
         tagger code =
             if code == 13 || code == 37 then
-              Activate tab.tabID
+                Activate tab.tabID
+
             else if code == 8 || code == 39 then
-              Close tab.tabID
+                Close tab.tabID
+
             else if code == 38 || code == 9 then
-              CycleUp
+                CycleUp
+
             else if code == 40 then
-              CycleDown
+                CycleDown
+
             else if code == 9 || code == 83 then
-              Save tab
+                Save tab
+
             else if code == 48 then
-              ShowSaved
+                ShowSaved
+
             else if code == 49 then
-              ShowCurrent
+                ShowCurrent
+
             else
-              NoOp
+                NoOp
     in
-        on "keydown" (Json.Decode.map tagger keyCode)
+    on "keydown" (Json.Decode.map tagger keyCode)
